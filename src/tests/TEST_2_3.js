@@ -5,8 +5,17 @@ export default function TEST_2_3() {
   const [file, setFile] = useState(null);
 
   function handleLoad(){
-    if(document.getElementById("image") && ratio !== [document.getElementById("image").offsetWidth,document.getElementById("image").offsetHeight] ){
-    setRatio([document.getElementById("image").offsetWidth,document.getElementById("image").offsetHeight])}
+    let gcdImg = gcd(document.getElementById("image").offsetWidth,document.getElementById("image").offsetHeight);
+    if(document.getElementById("image") && ratio !== [document.getElementById("image").offsetWidth/gcdImg,document.getElementById("image").offsetHeight/gcdImg] ){
+    setRatio([document.getElementById("image").offsetWidth/gcdImg,document.getElementById("image").offsetHeight/gcdImg])}
+  }
+
+  function gcd(a, b) {
+    if (b) {
+        return gcd(b, a % b);
+    } else {
+        return Math.abs(a);
+    }
   }
 
   return (
