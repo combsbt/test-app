@@ -4,7 +4,7 @@ import './styles.css';
 
 export default function TEST_2_4() {
 
-  const [toggles, setToggles] = useState([null,0,null,0,1,null,null,null,1,1,1])
+  const [toggles, setToggles] = useState([null,1,1,1,1,1,1,1,1,1,1])
   let children = [null, [3,4], null, [8,9,10], null, null, null, null, null, null, null]
 
   function toggleBtn(catNum){
@@ -17,12 +17,27 @@ export default function TEST_2_4() {
         newToggles[i] = toggles[i]
       }
     }
-    if(!newToggles[catNum] && children[catNum] !== null){
-        for(let i = 0; i < children[catNum].length; i++){
-          newToggles[children[catNum][i]] = 0;
+    
+    let catList = [];
+    recCollapse(catNum, catList)
+    if(catList !== []){
+        for(let i = 0; i < catList.length; i++){
+          newToggles[catList[i]] = newToggles[catNum]?1:0;
         }
       }
     setToggles(newToggles)
+    console.log(newToggles)
+  }
+
+  function recCollapse(catNum, catList){
+    //console.log(children[catNum] && children[catNum].length)
+    if(children[catNum] !== null){
+      for(let i = 0; i < children[catNum].length; i++){
+        console.log(children[catNum][i])
+        catList.push(children[catNum][i]) 
+        recCollapse(children[catNum][i], catList)  
+      }
+    }
   }
 
   return (
