@@ -8,8 +8,8 @@ export default function TEST_2_3() {
     let width = document.getElementById("image").naturalWidth;
     let height = document.getElementById("image").naturalHeight;
     let gcdImg = gcd(width,height);
-    if(ratio !== [width/gcdImg,height/gcdImg] ){
-    setRatio([width/gcdImg,height/gcdImg])}
+    if(ratio !== width/gcdImg+"x"+height/gcdImg ){
+    setRatio(width/gcdImg+"x"+height/gcdImg)}
   }
 
   function gcd(a, b) {
@@ -27,9 +27,9 @@ export default function TEST_2_3() {
         setFile(URL.createObjectURL(e.target.files[0]))
       }}/>
       <div className="result" data-test="result">
-        {ratio && ratio[0]+"x"+ratio[1]}
+        {ratio}
       </div>
-      <img id="image" src={file && file} onLoad={ handleLoad }/>
+      <img style={{display:"none"}} id="image" src={file && file} onLoad={ handleLoad }/>
     </div>
   );
 }
