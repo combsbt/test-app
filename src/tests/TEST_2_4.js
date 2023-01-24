@@ -28,7 +28,6 @@ export default function TEST_2_4() {
         }
       }
     setToggles(newToggles)
-    console.log(newToggles)
   }
 
   function recCollapse(catNum, catList){
@@ -40,11 +39,9 @@ export default function TEST_2_4() {
     }
   }
 
-  console.log(categories)
-
   function arrayRtn(){
     return [
-    <div key="blah">
+    <div key="blah" style={{textAlign:"left"}}>
       <ul className="root" data-test="root">
       {categories.map((cat)=>{return(
         <li key={"category-"+cat.id.toString()} data-test={"category-"+cat.id.toString()}>
@@ -74,7 +71,7 @@ export default function TEST_2_4() {
                   {child2.children && 
                     child2.children.map((child3)=>{return(
                     <ul>
-                      <li hidden={toggles[parents[child3.id]]} data-test={"category-"+child3.id}>{child3.name}</li>
+                      <li hidden={toggles[parents[child3.id]]} data-test={"category-"+child3.id} key={"category-"+child3.id}>{child3.name}</li>
                     </ul>
                   )}
                   )}
@@ -98,36 +95,8 @@ export default function TEST_2_4() {
 
   return (
     <div>
-      {console.log(testarr)}
-      {testarr}
       <h2>Category tree</h2>
-      <ul className="root" data-test="root">
-        <li data-test="category-1">
-          <button id="1" data-test="toggle-btn" className="toggle" onClick={()=>{toggleBtn(1)}}>
-            {toggles[1]?"+":"-"}
-          </button>
-          Electronics
-          <ul>
-            <li hidden={toggles[parents[3]]} data-test="category-3">
-              <button id="3" data-test="toggle-btn" className="toggle" onClick={()=>{toggleBtn(3)}}>
-                {toggles[3]?"+":"-"}
-              </button>
-              Accessories
-              <ul>
-                <li hidden={toggles[parents[8]]} data-test="category-8">Audio Accessories</li>
-                <li hidden={toggles[parents[9]]} data-test="category-9">Camera Accessories</li>
-                <li hidden={toggles[parents[10]]} data-test="category-10">Cell Phone Accessories</li>
-              </ul>
-            </li>
-            <li hidden={toggles[parents[4]]} data-test="category-4">
-              <button id="4" data-test="toggle-btn" className="toggle" onClick={()=>{toggleBtn(4)}}>
-                {toggles[4]?"+":"-"}
-              </button>
-              Computers
-            </li>
-          </ul>
-        </li>
-      </ul>
+      {testarr}
     </div>
   );
 }
