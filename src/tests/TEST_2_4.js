@@ -70,9 +70,7 @@ export default function TEST_2_4() {
                   {child2.name}
                   <ul>{child2.children && 
                     child2.children.map((child3)=>{return(
-                    
                       <li hidden={toggles[parents[child3.id]]} data-test={"category-"+child3.id} key={"category-"+child3.id}>{child3.name}</li>
-                    
                   )}
                   )}</ul>
                   </li>
