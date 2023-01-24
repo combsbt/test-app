@@ -59,7 +59,7 @@ export default function TEST_2_4() {
               </button>
               }
               {child.name}
-              {child.children && 
+              <ul>{child.children && 
                 child.children.map((child2)=>{return(
                   <li hidden={toggles[parents[child2.id]]} data-test={"category-"+child2.id} key={"category-"+child2.id}>
                   {child2.children &&
@@ -68,16 +68,16 @@ export default function TEST_2_4() {
                   </button>
                   }
                   {child2.name}
-                  {child2.children && 
+                  <ul>{child2.children && 
                     child2.children.map((child3)=>{return(
-                    <ul>
+                    
                       <li hidden={toggles[parents[child3.id]]} data-test={"category-"+child3.id} key={"category-"+child3.id}>{child3.name}</li>
-                    </ul>
+                    
                   )}
-                  )}
+                  )}</ul>
                   </li>
               )}
-              )}
+              )}</ul>
               </li>
             )}
             )}
