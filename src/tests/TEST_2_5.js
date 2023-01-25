@@ -20,9 +20,38 @@ export default function TEST_2_5() {
         total = total + bloodTests[i-1].price
       }
     }
+    packSuggestion(newCheckList)
     setTotal(total)
-    setCheckList(newCheckList)
+    setCheckList(newCheckList)  
+  }
+
+  function packSuggestion(checkList){
+    let testes = []
+    for(let i = 0; i < checkList.length; i++){
+      if(checkList[i]){
+        testes.push(i)
+      }
+    }
     
+    let inBoth = []
+    bloodPacks.map((pack)=>{return(pack.tests.forEach(itm=>{
+        inBoth.push(itm in testes)
+        })
+      )})
+
+
+    // inBoth = bloodPacks.map((pack)=>{return(
+    //     pack.map((tests=>{return(
+    //       tests.map(test=>{return(
+    //         test in tests
+    //           )
+    //         })
+    //       )
+    //   }))
+    //   )  
+    // })
+
+    console.log(inBoth)
   }
 
   return (
