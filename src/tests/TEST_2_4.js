@@ -1,24 +1,20 @@
 import { React, useState } from 'react';
-import { Category, categories } from './categories';
+import { categories } from './categories';
 import './styles.css';
 
 export default function TEST_2_4() {
-
   // Create an array to store "+" or "-" state of all buttons
   // Array position corresponds to the category id
-  const [toggles, setToggles] = useState([null,0,0,0,0,0,0,0,0,0,0,0])
-  
 // this can be pulled from the imported categories directly
+  const [toggles, setToggles] = useState([null,0,0,0,0,0,0,0,0,0,0,0]) 
   let children = [null, [3,4], [5,6,7], [8,9,10], [11,12,13], null, null, null, null, null, null, [14,15,16], null, null, null, null, null]
   let parents = [null, null, null, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 11, 11, 11]
-  
   // create the JSX output in an array
   let jsxArray = arrayRtn();
 
   // Function called from button press that updates and sets the "toggles" array of all button states
   function toggleBtn(catNum){
     // Creates a "newToggles" array with the the input button state flipped
-// remove this and add input button to catList
     let newToggles = [];
     for (let i = 0; i < toggles.length; i++){
       if(i===catNum){
@@ -28,9 +24,8 @@ export default function TEST_2_4() {
         newToggles[i] = toggles[i]
       }
     }
-    // Updates the "newToggles" array with all child buttons flipped
+    // Creat array "catList" and populate with child ids
     let catList = [];
-    // Populate catList with child ids
     recCollapse(catNum, catList)
     // Update "newToggles" with all child button states flipped
     if(catList !== []){
