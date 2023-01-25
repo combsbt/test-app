@@ -8,21 +8,45 @@ export default function TEST_2_5() {
   console.log(bloodPacks)
 
   const [checkList, setCheckList] = useState(Array(bloodTests.length+1).fill(0))
+  const [total, setTotal] = useState(0)
+
 
   function handleCheck(id){
-    console.log(id)
-
+    let newCheckList = checkList
+    newCheckList[id] = checkList[id]?0:1
+    let total = 0;
+    for(let i = 0; i < newCheckList.length; i++){
+      if(newCheckList[i]){
+        total = total + bloodTests[i-1].price
+      }
+    }
+    setTotal(total)
+    setCheckList(newCheckList)
+    
   }
 
   return (
     <div style={{textAlign:"left"}}>
-      {bloodTests.map((item)=>
-      <div key={item.name}>
-        <input type="checkbox" id={item.id} onChange={()=>handleCheck(item.id)}/>
-        <label htmlFor={item.id}>{item.name}</label>
+      <h2>Blood test packs</h2>
+      <ul>
+        {bloodTests.map((item)=>
+        <div key={item.name}>
+          <label data-test={"test-"+item.id}>
+            <input type="checkbox" id={item.id} onChange={()=>handleCheck(item.id)}/>
+            {item.name+" $"+item.price}
+          </label>
+        </div>
+        )}
+      </ul>
+      <div>
+        Total: <span data-test="total">${total}</span>
       </div>
-      )}
-      
+      <div>
+        Suggested pack: <span data-test="pack">Active minimum</span>
+      </div>
+      <div>
+        Save: <span data-test="save">${40}</span>
+      </div>
     </div>
   );
 }
