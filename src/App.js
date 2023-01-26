@@ -7,6 +7,7 @@ import TEST_2_3 from './tests/TEST_2_3';
 import TEST_2_4 from './tests/TEST_2_4';
 import TEST_2_5 from './tests/TEST_2_5';
 import TEST_2_6 from './tests/TEST_2_6';
+import TEST_2_7 from './tests/TEST_2_7';
 
 function App() {
   
@@ -20,6 +21,7 @@ function App() {
             <Route path='/Test_2_4' element={<TEST_2_4/>} />
             <Route path='/Test_2_5' element={<TEST_2_5/>} />
             <Route path='/Test_2_6' element={<TEST_2_6/>} />
+            <Route path='/Test_2_7' element={<TEST_2_7/>} />
           </Routes>
       </div>
     </BrowserRouter>
