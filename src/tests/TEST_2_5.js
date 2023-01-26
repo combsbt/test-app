@@ -112,7 +112,7 @@ export default function TEST_2_5() {
         Total: <span data-test="total">${total}</span>
       </div>
       <div>
-        Suggested pack: <span data-test="pack">{mins[1]?bloodPacks[mins[1]-1].name:"none"}</span>
+        Suggested pack: <span data-test="pack">{mins[1]?bloodPacks[mins[1]-1].name:"-"}</span>
       </div>
       <div>
         Save: <span data-test="save">${total - mins[0]}</span>
