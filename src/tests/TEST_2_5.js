@@ -9,7 +9,7 @@ export default function TEST_2_5() {
 
   const [checkList, setCheckList] = useState(Array(bloodTests.length+1).fill(0))
   const [total, setTotal] = useState(0)
-
+  const [mins, setMins] = useState([0, 0])
 
   function handleCheck(id){
     let newCheckList = checkList
@@ -20,12 +20,12 @@ export default function TEST_2_5() {
         total = total + bloodTests[i-1].price
       }
     }
-    packSuggestion(newCheckList)
+    packSuggestion(newCheckList, setMins)
     setTotal(total)
     setCheckList(newCheckList)  
   }
 
-  function packSuggestion(checkList){
+  function packSuggestion(checkList, setMins){
     let testes = []
     for(let i = 0; i < checkList.length; i++){
       if(checkList[i]){
@@ -78,6 +78,8 @@ export default function TEST_2_5() {
     console.log(newPackList)
     console.log(newTotals)
 
+    
+    setMins([minimum,minIndex])
 
     // inBoth = bloodPacks.map((pack)=>{return(
     //     pack.map((tests=>{return(
@@ -110,10 +112,10 @@ export default function TEST_2_5() {
         Total: <span data-test="total">${total}</span>
       </div>
       <div>
-        Suggested pack: <span data-test="pack">Active minimum</span>
+        Suggested pack: <span data-test="pack">{mins[1]?bloodPacks[mins[1]-1].name:"none"}</span>
       </div>
       <div>
-        Save: <span data-test="save">${total}</span>
+        Save: <span data-test="save">${total - mins[0]}</span>
       </div>
     </div>
   );
