@@ -32,6 +32,7 @@ export default function TEST_2_5() {
     }
     //for each pack, make an array that contains items 
     //common to both the pack and the array of checked items
+    //leave array item with index 0 empty
     let packList = Array(bloodPacks.length+1).fill([])
     for(let i = 0; i < bloodPacks.length; i++){
       let newTestes = []
@@ -52,6 +53,7 @@ export default function TEST_2_5() {
           newList.push(bloodTests[itm-1].price)
         }
       })
+      //index 0 of the array has the total with no pack 
       if(i){
         newList.push(bloodPacks[i-1].price)
       }
