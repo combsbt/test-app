@@ -32,12 +32,51 @@ export default function TEST_2_5() {
         testes.push(i)
       }
     }
+    console.log(testes+'testes')
+
+    let packList = Array(bloodPacks.length+1).fill([])
+    for(let i = 0; i < bloodPacks.length; i++){
+      let newTestes = []
+      bloodPacks[i].tests.forEach(itm=>{
+        if(testes.includes(itm)){
+          newTestes.push(itm)
+        }
+      })
+      packList[i+1] = newTestes
+    }
+
+    let newPackList=Array(packList.length).fill([])
+    for(let i = 0; i < packList.length; i++){
+      let newList=[]
+      testes.forEach(itm=>{
+        if(!packList[i].includes(itm)){
+          newList.push(bloodTests[itm-1].price)
+        }
+      })
+      if(i){
+        newList.push(bloodPacks[i-1].price)
+      }
+      newPackList[i] = newList
+    }
+
+    let newTotals = Array(newPackList.length).fill(0)
+    for(let i = 0; i < newPackList.length; i++){
+      let tot = 0
+      newPackList[i].forEach(itm=>{
+        tot = tot + itm
+      })
+      newTotals[i]=tot
+    }
+
+    let minimum = Math.min(...newTotals)
+    let minIndex = newTotals.indexOf(minimum)
+    console.log('minin '+minIndex)
+
     
-    let inBoth = []
-    bloodPacks.map((pack)=>{return(pack.tests.forEach(itm=>{
-        inBoth.push(itm in testes)
-        })
-      )})
+
+    console.log(packList)
+    console.log(newPackList)
+    console.log(newTotals)
 
 
     // inBoth = bloodPacks.map((pack)=>{return(
@@ -51,7 +90,7 @@ export default function TEST_2_5() {
     //   )  
     // })
 
-    console.log(inBoth)
+    
   }
 
   return (
@@ -74,7 +113,7 @@ export default function TEST_2_5() {
         Suggested pack: <span data-test="pack">Active minimum</span>
       </div>
       <div>
-        Save: <span data-test="save">${40}</span>
+        Save: <span data-test="save">${total}</span>
       </div>
     </div>
   );
