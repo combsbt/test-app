@@ -67,13 +67,13 @@ export default function TEST_2_6() {
           At least 1 letter: <span data-test="result">{oneLetter?"YES":"NO"}</span>
         </li>
         <li data-test="rule-2">
-          At least 1 number: <span data-test="result">{oneNumber?"YES":"NO"}}</span>
+          At least 1 number: <span data-test="result">{oneNumber?"YES":"NO"}</span>
         </li>
         <li data-test="rule-3">
-          At least 1 special character: <span data-test="result">{oneSpecial?"YES":"NO"}}</span>
+          At least 1 special character: <span data-test="result">{oneSpecial?"YES":"NO"}</span>
         </li>
         <li data-test="rule-4">
-          Min. 8 characters: <span data-test="result">{oneLength?"YES":"NO"}}</span>
+          Min. 8 characters: <span data-test="result">{oneLength?"YES":"NO"}</span>
         </li>
       </ul>
       <div>
