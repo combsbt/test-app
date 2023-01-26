@@ -4,9 +4,6 @@ import './styles.css';
 
 export default function TEST_2_5() {
 
-  console.log(bloodTests)
-  console.log(bloodPacks)
-
   const [checkList, setCheckList] = useState(Array(bloodTests.length+1).fill(0))
   const [total, setTotal] = useState(0)
   const [mins, setMins] = useState([0, 0])
@@ -26,14 +23,15 @@ export default function TEST_2_5() {
   }
 
   function packSuggestion(checkList, setMins){
+    //get array of checked items
     let testes = []
     for(let i = 0; i < checkList.length; i++){
       if(checkList[i]){
         testes.push(i)
       }
     }
-    console.log(testes+'testes')
-
+    //for each pack, make an array that contains items 
+    //common to both the pack and the array of checked items
     let packList = Array(bloodPacks.length+1).fill([])
     for(let i = 0; i < bloodPacks.length; i++){
       let newTestes = []
@@ -44,7 +42,8 @@ export default function TEST_2_5() {
       })
       packList[i+1] = newTestes
     }
-
+    //for each pack, make an array that includes prices of items
+    //that are checked but not in the pack + price of pack
     let newPackList=Array(packList.length).fill([])
     for(let i = 0; i < packList.length; i++){
       let newList=[]
@@ -58,7 +57,8 @@ export default function TEST_2_5() {
       }
       newPackList[i] = newList
     }
-
+    //for each pack, find the total cost of items
+    //that are checked but not in the pack + price of pack
     let newTotals = Array(newPackList.length).fill(0)
     for(let i = 0; i < newPackList.length; i++){
       let tot = 0
@@ -67,32 +67,10 @@ export default function TEST_2_5() {
       })
       newTotals[i]=tot
     }
-
+    //find the minimum price and which pack results in that price
     let minimum = Math.min(...newTotals)
     let minIndex = newTotals.indexOf(minimum)
-    console.log('minin '+minIndex)
-
-    
-
-    console.log(packList)
-    console.log(newPackList)
-    console.log(newTotals)
-
-    
-    setMins([minimum,minIndex])
-
-    // inBoth = bloodPacks.map((pack)=>{return(
-    //     pack.map((tests=>{return(
-    //       tests.map(test=>{return(
-    //         test in tests
-    //           )
-    //         })
-    //       )
-    //   }))
-    //   )  
-    // })
-
-    
+    setMins([minimum,minIndex]) 
   }
 
   return (
