@@ -9,6 +9,7 @@ import TEST_2_5 from './tests/TEST_2_5';
 import TEST_2_6 from './tests/TEST_2_6';
 import TEST_2_7 from './tests/TEST_2_7';
 import TEST_2_8 from './tests/TEST_2_8';
+import TEST_2_9 from './tests/TEST_2_9';
 
 function App() {
   
@@ -24,6 +25,7 @@ function App() {
             <Route path='/Test_2_6' element={<TEST_2_6/>} />
             <Route path='/Test_2_7' element={<TEST_2_7/>} />
             <Route path='/Test_2_8' element={<TEST_2_8/>} />
+            <Route path='/Test_2_9' element={<TEST_2_9/>} />
           </Routes>
       </div>
     </BrowserRouter>
