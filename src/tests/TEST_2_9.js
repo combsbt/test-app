@@ -3,7 +3,17 @@ import './styles_2.css';
 
 export default function TEST_2_9() {
 
-  const [cells, setCells] = useState(Array(7*3).fill(0))
+  const ROWS = 8
+  const columnList = ["A","B","C","D"] 
+  const [cells, setCells] = useState(Array(ROWS*columnList.length).fill(0))
+  
+  let cellList = []
+  for(let x = 0; x < columnList.length; x=x+1){
+    for(let i = 0; i < cells.length/columnList.length; i = i+1){
+      cellList.push(columnList[x]+i)
+    }
+  }
+  console.log(cellList)
 
   function handleChange(values){
     console.log(values)
