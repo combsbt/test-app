@@ -6,12 +6,15 @@ export default function TEST_2_9() {
   const ROWS = 7
   const columnList = ["A","B","C"]
   const gridColumns = "150px "
-  const [cells, setCells] = useState({})
+  const [cells, setCells] = useState({"A1":""})
 
   let cellList = []
   for(let i=0; i < ROWS; i++){
     for(let j=0; j < columnList.length; j++){
       cellList.push(columnList[j]+(i+1))
+      if(cells[columnList[j]+(i+1)]===undefined){
+        setCells({...cells,[columnList[j]+(i+1)]:""})
+      }
     }
   }
 
@@ -25,7 +28,7 @@ export default function TEST_2_9() {
     for(let j=0; j < columnList.length; j++){
       jsxArray2.push(   
         <div key={columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)}>
-          <input id={columnList[j]+(i+1)} type="text" defaultValue="" value={cells.id} 
+          <input id={columnList[j]+(i+1)} type="text" value={cells[columnList[j]+(i+1)]} 
           onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1))}
           onBlur={()=>handleCalc(columnList[j]+(i+1))} 
           onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
@@ -41,7 +44,13 @@ export default function TEST_2_9() {
   }
 
   function handleCalc(cell){
-    console.log(cell)
+    if(cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
+      try{
+        setCells({...cells,[cell]:eval(cells[cell].substring(1)).toString()})
+      } catch(error){
+        setCells({...cells,[cell]:["$ERR"]})
+      }
+    }
   }
 
   return (
