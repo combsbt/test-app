@@ -4,16 +4,34 @@ import './styles_2.css';
 export default function TEST_2_9() {
 
   const ROWS = 8
-  const columnList = ["A","B","C","D"] 
+  const columnList = ["A","B","C"]
+  const gridColumns = "150px "
+  console.log(gridColumns)
   const [cells, setCells] = useState(Array(ROWS*columnList.length).fill(0))
-  
+
   let cellList = []
-  for(let x = 0; x < columnList.length; x=x+1){
-    for(let i = 0; i < cells.length/columnList.length; i = i+1){
-      cellList.push(columnList[x]+i)
+  for(let i=0; i < ROWS; i++){
+    for(let j=0; j < columnList.length; j++){
+      cellList.push(columnList[j]+(i+1))
     }
   }
   console.log(cellList)
+  let jsxArray = []
+  for(let i=0; i < columnList.length; i++){
+    jsxArray.push(<div key={columnList[i]} className="cell header">{columnList[i]}</div>)
+  }  
+  let jsxArray2 = []
+  for(let i=0; i < ROWS; i++){
+    jsxArray2.push(<div key={"header"+(i+1)} className="cell header">{i+1}</div>)
+    for(let j=0; j < columnList.length; j++){
+      jsxArray2.push(   
+        <div key={columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)}>
+          <input id={jsxArray2.length-1} type="text" defaultValue="" value={cells.id} onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
+        </div>
+      )
+    }
+  }
+  console.log(jsxArray2)
 
   function handleChange(values){
     console.log(values)
@@ -25,14 +43,16 @@ export default function TEST_2_9() {
     console.log(newCells)
   }
 
+
+
   return (
     <div style={{textAlign:"left", padding:"20px"}}>
       <h2>Calculation Sheet</h2>
-      <div className="grid">
+      <div className="grid" style={{gridTemplateColumns: "30px "+gridColumns.repeat(columnList.length)}}>
         <div className="cell"></div>
-        <div className="cell header">A</div>
-        <div className="cell header">B</div>
-        <div className="cell header">C</div>
+        {jsxArray}
+        {jsxArray2}
+        {/*
         <div className="cell header">1</div>
         <div className="cell" data-test="A1">
           <input id="0" type="text" defaultValue="" value={cells.id} onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
@@ -102,7 +122,7 @@ export default function TEST_2_9() {
         </div>
         <div className="cell" data-test="C7">
           <input id="20" type="text" defaultValue="" onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
-        </div>
+        </div>*/}
       </div>
     </div>
   );
