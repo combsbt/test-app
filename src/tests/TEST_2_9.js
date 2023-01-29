@@ -6,7 +6,7 @@ export default function TEST_2_9() {
   const ROWS = 7
   const columnList = ["A","B","C"]
   const gridColumns = "150px "
-  const [cells, setCells] = useState([])
+  const [cells, setCells] = useState({})
 
   let cellList = []
   for(let i=0; i < ROWS; i++){
@@ -14,7 +14,7 @@ export default function TEST_2_9() {
       cellList.push(columnList[j]+(i+1))
     }
   }
-  console.log(cellList)
+
   let jsxArray = []
   for(let i=0; i < columnList.length; i++){
     jsxArray.push(<div key={columnList[i]} className="cell header">{columnList[i]}</div>)
@@ -25,24 +25,24 @@ export default function TEST_2_9() {
     for(let j=0; j < columnList.length; j++){
       jsxArray2.push(   
         <div key={columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)}>
-          <input id={jsxArray2.length-1} type="text" defaultValue="" value={cells.id} onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
+          <input id={columnList[j]+(i+1)} type="text" defaultValue="" value={cells.id} 
+          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1))}
+          onBlur={()=>handleCalc(columnList[j]+(i+1))} 
+          onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
         </div>
       )
     }
   }
-  console.log(jsxArray2)
 
   function handleChange(values){
     console.log(values)
-    console.log(cells)
-    let newCells = cells
-    newCells[values[0]]=values[1]
-    setCells(newCells)
-    
-    console.log(newCells)
+    let cell = values[0]
+    setCells({...cells,[cell]:values[1]})
   }
 
-
+  function handleCalc(cell){
+    console.log(cell)
+  }
 
   return (
     <div style={{textAlign:"left", padding:"20px"}}>
