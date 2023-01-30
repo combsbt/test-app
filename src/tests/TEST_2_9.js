@@ -26,70 +26,49 @@ export default function TEST_2_9() {
 
   useEffect(()=>{
     let cellsCopy = {...cells}
-    let cellVals = {...cells}
     let cellList = []
     for(let i=0; i < ROWS; i++){
       for(let j=0; j < columnList.length; j++){
         cellList.push(columnList[j]+(i+1))
       }
     }
-    let finalList= {}
+
+    //find cells that are equations
+    let eqList = []
     cellList.map(cell=>{
-      let newCell = cellsCopy[cell]
       if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
-        console.log(cell, cellsCopy[cell])
-        console.log('eq')
-        let defList={}
-        finalList = recursiveCellReplace(cell, cellsCopy, cellList, defList, finalList)
-        console.log('RETURNED ' + finalList)
-      }
-      if(cellVals[cell]!==newCell){
-        cellVals={...cellVals,[cell]:newCell}
+        eqList.push(cell)
       }
     })
-    console.log("FINALLIST")
-    console.log(finalList)
-    solveCells(finalList)
-    setCellValues({...cellVals})
+    console.log('eqList')
+    console.log(eqList)
+
+    //find paths for each eq cell
+    eqList.forEach(eq=>{
+      console.log(cellsCopy[eq])
+      let paths = [];
+      paths = pathFinder(cellsCopy, cellList, eq, paths)
+      console.log(paths)
+
+    })
+    
+
   },[cells])
 
-  function recursiveCellReplace(cell, cellsCopy, cellList, defList, finalList){
-    // cellsCopy[cell] starts with "="
-    let oldCell = cellsCopy[cell]
-    let containsList = []
-    cellList.forEach(testCell=>{
-      if(oldCell.includes(testCell)){
-        console.log("TEST " + testCell)
-        containsList.push(testCell)
-        // if included cell is another equation
-        if(cellsCopy[testCell].substring(0,1)==="="){
-          console.log('another')
-          defList = {...defList,[testCell]:'anoth'}
-          recursiveCellReplace(testCell, cellsCopy, cellList, defList, finalList)
+  function pathFinder(cellsCopy, cellList, start, paths){
+    
+    cellList.forEach(cell=>{    
+        if(cellsCopy[start].includes(cell)){
+          console.log(cell)
+          paths.push([start,cell])
+          console.log(paths)
+          pathFinder(cellsCopy, cellList, cell, paths)
         }
-        else{
-          console.log("INCLUDES"+testCell)
-          //defList = {...defList,[testCell]:'final'}
-          finalList = {...finalList, [testCell]:cellsCopy[testCell]}
-        }
-      }
-    })
-    if(Object.keys(defList).length===0){
-      console.log("NODSFER")
-      console.log(oldCell)
-      finalList = {...finalList, [cell]:cellsCopy[cell]}
-    }
-    console.log("CONTAINS "+containsList)
-    console.log("DEFLIST")
-    console.log(defList)
-    return(finalList)
-    //solveCells(finalList)
-    //return(oldCell)
+      })
+    return paths
+    
   }
-
-  function solveCells(finalList){
-
-  }
+  
 
   function handleCalc(id, value){
     document.getElementById(id).hidden=true;
