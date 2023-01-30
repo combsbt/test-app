@@ -44,31 +44,42 @@ export default function TEST_2_9() {
     console.log(eqList)
 
     //find paths for each eq cell
+    let initPaths = {}
     eqList.forEach(eq=>{
       console.log(cellsCopy[eq])
       let paths = [];
       paths = pathFinder(cellsCopy, cellList, eq, paths)
       console.log(paths)
-
+      initPaths = {...initPaths,[eq]:paths}
     })
+    console.log(initPaths)
+    console.log(initPaths["B3"])
+    
+    if(initPaths && initPaths["B3"]){
+      let newPath = initPaths["B3"];
+      for(let i=0; i < initPaths["B3"].length; i++){
+        if(initPaths[initPaths["B3"][i]]){
+          console.log(initPaths["B3"][i])
+          console.log(newPath.indexOf(initPaths["B3"][i]))
+          newPath[newPath.indexOf(initPaths["B3"][i])] = initPaths[initPaths["B3"][i]]
+        }
+      }
+      console.log(newPath)  
+    }
     
 
   },[cells])
 
   function pathFinder(cellsCopy, cellList, start, paths){
-    
     cellList.forEach(cell=>{    
         if(cellsCopy[start].includes(cell)){
+          paths.push(cell)
           console.log(cell)
-          paths.push([start,cell])
-          console.log(paths)
-          pathFinder(cellsCopy, cellList, cell, paths)
+          //pathFinder(cellsCopy, cellList, cell, paths)
         }
-      })
+      })  
     return paths
-    
   }
-  
 
   function handleCalc(id, value){
     document.getElementById(id).hidden=true;
