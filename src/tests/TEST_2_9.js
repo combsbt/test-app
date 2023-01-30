@@ -7,37 +7,36 @@ export default function TEST_2_9() {
   const columnList = ["A","B","C"]
   const gridColumns = "150px "
   
-//get rid of this and reference input cells by id
   const [cells, setCells] = useState({})
   const [cellValues, setCellValues] = useState({})
 
-  let cellList = []
-  for(let i=0; i < ROWS; i++){
-    for(let j=0; j < columnList.length; j++){
-      cellList.push(columnList[j]+(i+1))
-      if(cells[columnList[j]+(i+1)]===undefined){
-        setCells({...cells,[columnList[j]+(i+1)]:""})
-      }
-      if(cellValues[columnList[j]+(i+1)]===undefined){
-        setCellValues({...cells,[columnList[j]+(i+1)]:""})
-      }
-    }
-  }
+  console.log('test')
 
   useEffect(()=>{
-    
-    let cellVals = cells
+    let cellList = {}
+    for(let i=0; i < ROWS; i++){
+      for(let j=0; j < columnList.length; j++){
+        cellList[columnList[j]+(i+1)] = "";
+      }
+    }
+    console.log(cellList)
+    setCells({...cellList})
+    setCellValues({...cellList})
+  },[])
+
+  useEffect(()=>{
+    let cellsCopy = {...cells}
+    let cellVals = {...cells}
     let cellList = []
     for(let i=0; i < ROWS; i++){
       for(let j=0; j < columnList.length; j++){
         cellList.push(columnList[j]+(i+1))
       }
     }
-    // console.log(cello)
-    cellList.forEach(cell=>{
+    cellList.map(cell=>{
       console.log(cell)
-      if(cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
-
+      if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
+        //newValues[cell]="eq"
         let newCell = cells[cell].substring(1);
         console.log(newCell)
         
@@ -46,14 +45,16 @@ export default function TEST_2_9() {
 
         cellList.forEach(celler=>{  
           if(newestCell.includes(celler)){
-            newestCell = newestCell.replace(celler,cells[celler])
+            if(cells[celler]===""){
+              console.log(true)
+              newestCell = newestCell.replace(celler,"err")
+            }
+            else{newestCell = newestCell.replace(celler,cells[celler])}
           }  
         })
-      // console.log(newestCell)
-      //console.log(eval(newestCell).toString())
-      // //  newestCell = eval(newestCell).toString()
-      //    console.log(newestCell)
-      console.log({...cellVals})
+        
+        console.log(newestCell)
+
         try{
           cellVals[cell]=(newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?"#ERR":eval(newestCell).toString()
         } catch(error){
@@ -61,47 +62,10 @@ export default function TEST_2_9() {
           cellVals[cell]="#ERR"
         }
       }
-
     })
-    console.log(cellVals)
-    setCellValues(cellVals)
 
+    setCellValues({...cellVals})
   },[cells])
-
-  console.log("render")
-
-  let jsxArray = []
-  for(let i=0; i < columnList.length; i++){
-    jsxArray.push(<div key={columnList[i]} className="cell header">{columnList[i]}</div>)
-  }  
-  let jsxArray2 = []
-  for(let i=0; i < ROWS; i++){
-    jsxArray2.push(<div key={"header"+(i+1)} className="cell header">{i+1}</div>)
-    for(let j=0; j < columnList.length; j++){
-      jsxArray2.push(   
-        <div key={"key"+columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)} 
-        onClick={()=>{
-          document.getElementById(columnList[j]+(i+1)).hidden=false;
-          document.getElementById(columnList[j]+(i+1)).focus();
-        }}  >
-          <input hidden={true} id={columnList[j]+(i+1)} type="text"  
-          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1),[e.target.id,e.target.value])}
-          onBlur={(e)=>handleCalc(columnList[j]+(i+1),[e.target.id,e.target.value])} 
-          onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
-          {cellValues[columnList[j]+(i+1)]}
-        </div>
-      )
-    }
-  }
-
-  function handleChange(values){
-     console.log(values)
-    // let cell = values[0]
-    // setCells({...cells,[cell]:values[1]})
-    // if(values[1] && values[1].substring(0,1)!=="="){
-    //   setCellValues({...cellValues,[cell]:values[1]})
-    // }
-  }
 
   function recursiveCellReplace(cellList, newCell){
     // console.log(cellList)
@@ -121,12 +85,37 @@ export default function TEST_2_9() {
     
   }
 
-  function handleCalc(cello, values){
-    console.log(cells)
-    document.getElementById(cello).hidden=true;
-    setCells({...cells, [values[0]]:values[1]})
+  function handleCalc(id, value){
+    document.getElementById(id).hidden=true;
+    let newCells = {...cells}
+    newCells[id] = value
+    setCells({...newCells})
   }
-
+  
+  let jsxArray = []
+  for(let i=0; i < columnList.length; i++){
+    jsxArray.push(<div key={columnList[i]} className="cell header">{columnList[i]}</div>)
+  }  
+  let jsxArray2 = []
+  for(let i=0; i < ROWS; i++){
+    jsxArray2.push(<div key={"header"+(i+1)} className="cell header">{i+1}</div>)
+    for(let j=0; j < columnList.length; j++){
+      let display = cellValues[columnList[j]+(i+1)]
+      jsxArray2.push(   
+        <div key={"key"+columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)} 
+        onClick={()=>{
+          document.getElementById(columnList[j]+(i+1)).hidden=false;
+          document.getElementById(columnList[j]+(i+1)).focus();
+        }}  >
+          <input hidden={true} id={columnList[j]+(i+1)} type="text"  
+          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(e.target.id,e.target.value)}
+          onBlur={(e)=>handleCalc(e.target.id,e.target.value)}/>
+          {display}
+        </div>
+      )
+    }
+  }
+  
   return (
     <div style={{textAlign:"left", padding:"20px"}}>
       <h2>Calculation Sheet</h2>
