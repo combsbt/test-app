@@ -6,6 +6,8 @@ export default function TEST_2_9() {
   const ROWS = 7
   const columnList = ["A","B","C"]
   const gridColumns = "150px "
+  
+//get rid of this and reference input cells by id
   const [cells, setCells] = useState({})
   const [cellValues, setCellValues] = useState({})
 
@@ -35,8 +37,9 @@ export default function TEST_2_9() {
     cellList.forEach(cell=>{
       console.log(cell)
       if(cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
+
         let newCell = cells[cell].substring(1);
-        
+        console.log(newCell)
         
         let newestCell = recursiveCellReplace(cellList, newCell)
         console.log(newestCell)
@@ -52,10 +55,10 @@ export default function TEST_2_9() {
       //    console.log(newestCell)
       console.log({...cellVals})
         try{
-          (newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?cellVals={...cellValues,[cell]:"#ERR"}:cellVals={...cellValues,[cell]:eval(newestCell).toString()}
+          cellVals[cell]=(newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?"#ERR":eval(newestCell).toString()
         } catch(error){
           console.log(error)
-          cellVals={...cellValues,[cell]:"#ERR"}
+          cellVals[cell]="#ERR"
         }
       }
 
@@ -81,9 +84,9 @@ export default function TEST_2_9() {
           document.getElementById(columnList[j]+(i+1)).hidden=false;
           document.getElementById(columnList[j]+(i+1)).focus();
         }}  >
-          <input hidden={true} id={columnList[j]+(i+1)} type="text" value={cells[columnList[j]+(i+1)]} 
-          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1))}
-          onBlur={()=>handleCalc(columnList[j]+(i+1))} 
+          <input hidden={true} id={columnList[j]+(i+1)} type="text"  
+          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1),[e.target.id,e.target.value])}
+          onBlur={(e)=>handleCalc(columnList[j]+(i+1),[e.target.id,e.target.value])} 
           onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
           {cellValues[columnList[j]+(i+1)]}
         </div>
@@ -93,11 +96,11 @@ export default function TEST_2_9() {
 
   function handleChange(values){
      console.log(values)
-    let cell = values[0]
-    setCells({...cells,[cell]:values[1]})
-    if(values[1] && values[1].substring(0,1)!=="="){
-      setCellValues({...cellValues,[cell]:values[1]})
-    }
+    // let cell = values[0]
+    // setCells({...cells,[cell]:values[1]})
+    // if(values[1] && values[1].substring(0,1)!=="="){
+    //   setCellValues({...cellValues,[cell]:values[1]})
+    // }
   }
 
   function recursiveCellReplace(cellList, newCell){
@@ -118,9 +121,10 @@ export default function TEST_2_9() {
     
   }
 
-  function handleCalc(cello){
+  function handleCalc(cello, values){
+    console.log(cells)
     document.getElementById(cello).hidden=true;
-    
+    setCells({...cells, [values[0]]:values[1]})
   }
 
   return (
