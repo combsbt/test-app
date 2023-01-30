@@ -34,55 +34,40 @@ export default function TEST_2_9() {
       }
     }
     cellList.map(cell=>{
-      console.log(cell)
+      console.log(cell, cellsCopy[cell])
+      let newCell = cellsCopy[cell]
       if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
-        //newValues[cell]="eq"
-        let newCell = cells[cell].substring(1);
-        console.log(newCell)
-        
-        let newestCell = recursiveCellReplace(cellList, newCell)
-        console.log(newestCell)
-
-        cellList.forEach(celler=>{  
-          if(newestCell.includes(celler)){
-            if(cells[celler]===""){
-              console.log(true)
-              newestCell = newestCell.replace(celler,"err")
-            }
-            else{newestCell = newestCell.replace(celler,cells[celler])}
-          }  
-        })
-        
-        console.log(newestCell)
-
-        try{
-          cellVals[cell]=(newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?"#ERR":eval(newestCell).toString()
-        } catch(error){
-          console.log(error)
-          cellVals[cell]="#ERR"
-        }
+        console.log('eq')
+        newCell = recursiveCellReplace(cell, cellsCopy, cellList)
+      }
+      if(cellVals[cell]!==newCell){
+        cellVals={...cellVals,[cell]:newCell}
       }
     })
-
     setCellValues({...cellVals})
   },[cells])
 
-  function recursiveCellReplace(cellList, newCell){
-    // console.log(cellList)
-    let newerCell = newCell;
-    cellList.map(cell=>{  
-      if(newCell.includes(cell) && cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
-        newCell = newCell.replace(cell,cells[cell].replace("=",""))
+  function recursiveCellReplace(cell, cellsCopy, cellList){
+    let newCell = cellsCopy[cell]
+    cellList.forEach(cell=>{
+      console.log(cell + " test")
+      if(newCell && newCell.substring(0,1) && newCell.substring(0,1)==="="){
+        newCell=newCell.substring(1)
+      }
+      if(newCell && newCell.substring(0,1) && newCell.includes(cell)){
+        if(cellsCopy[cell] !== ""){
+          newCell = newCell.replace(cell, cellsCopy[cell])  
+        }
+        else{
+          newCell = "#ERR"
+        }
+        console.log(true)
+        return(recursiveCellReplace(newCell, cellsCopy, cellList))
       }
     })
-    if(newerCell!==newCell){
-      return(recursiveCellReplace(cellList, newCell))
-    }
-    else{
-    // console.log(newCell)
-    return(newCell)  
-    }
-    
+
+    return (newCell)
+
   }
 
   function handleCalc(id, value){
