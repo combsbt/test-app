@@ -47,23 +47,27 @@ export default function TEST_2_9() {
     setCellValues({...cellVals})
   },[cells])
 
-  function recursiveCellReplace(cell, cellsCopy, cellList){
-    let newCell = cellsCopy[cell]
+  function recursiveCellReplace(oldCell, cellsCopy, cellList){
+    let newCell = cellsCopy[oldCell]
     cellList.forEach(cell=>{
       console.log(cell + " test")
       if(newCell && newCell.substring(0,1) && newCell.substring(0,1)==="="){
         newCell=newCell.substring(1)
-      }
-      if(newCell && newCell.substring(0,1) && newCell.includes(cell)){
-        if(cellsCopy[cell] !== ""){
-          newCell = newCell.replace(cell, cellsCopy[cell])  
+        if(newCell.includes(cell)){
+          if(cellsCopy[cell] !== ""){
+            newCell = newCell.replace(cell, cellsCopy[cell])  
+          }
+          else{
+            newCell = "#ERR"
+          }
+          console.log(true)
+          console.log(newCell)
+          cellsCopy = {...cellsCopy, [oldCell]:newCell}
+          console.log(cellsCopy)
+          return(recursiveCellReplace(newCell, cellsCopy, cellList))
         }
-        else{
-          newCell = "#ERR"
-        }
-        console.log(true)
-        return(recursiveCellReplace(newCell, cellsCopy, cellList))
       }
+      
     })
 
     return (newCell)
