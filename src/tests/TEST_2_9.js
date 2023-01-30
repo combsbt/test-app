@@ -48,8 +48,8 @@ export default function TEST_2_9() {
           document.getElementById(columnList[j]+(i+1)).focus();
         }}  >
           <input hidden={true} id={columnList[j]+(i+1)} type="text" value={cells[columnList[j]+(i+1)]} 
-          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1))}
-          onBlur={()=>handleCalc(columnList[j]+(i+1))} 
+          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1),e.target.value)}
+          onBlur={(e)=>handleCalc(columnList[j]+(i+1), e.target.value)} 
           onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
           {cellValues[columnList[j]+(i+1)]}
         </div>
@@ -58,14 +58,16 @@ export default function TEST_2_9() {
   }
 
   function handleChange(values){
-    console.log(values)
+     console.log(values)
     let cell = values[0]
     setCells({...cells,[cell]:values[1]})
-    setCellValues({...cellValues,[cell]:values[1]})
+    if(values[1] && values[1].substring(0,1)!=="="){
+      setCellValues({...cellValues,[cell]:values[1]})
+    }
   }
 
   function recursiveCellReplace(cellList, newCell){
-    console.log(cellList)
+    // console.log(cellList)
     let newerCell = newCell;
     cellList.map(cell=>{  
       if(newCell.includes(cell) && cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
@@ -76,38 +78,56 @@ export default function TEST_2_9() {
       return(recursiveCellReplace(cellList, newCell))
     }
     else{
-    console.log(newCell)
+    // console.log(newCell)
     return(newCell)  
     }
     
   }
 
-  function handleCalc(cello){
+  function handleCalc(cello, value){
     document.getElementById(cello).hidden=true;
-    
+    console.log(value)
+
     let cellList = []
     for(let i=0; i < ROWS; i++){
       for(let j=0; j < columnList.length; j++){
         cellList.push(columnList[j]+(i+1))
       }
     }
-    console.log(cello)
+    // console.log(cello)
     cellList.map(cell=>{
+      console.log(cell)
       if(cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
-        let newCell = cells[cell].substring(1);
         
-        
-        let newestCell = recursiveCellReplace(cellList, newCell)
-        console.log(newestCell)
+        let newCell = ""
+        let newestCell = ""
+        if(cell!==cello){
+          newCell = cells[cell].substring(1);
+          newestCell = recursiveCellReplace(cellList, newCell)
+          console.log(newestCell)
 
-        cellList.forEach(cell=>{  
-          if(newestCell.includes(cell)){
-            newestCell = newestCell.replace(cell,cells[cell])
-          }  
-        })
+          cellList.forEach(cell=>{  
+            if(newestCell.includes(cell)){
+              newestCell = newestCell.replace(cell,cells[cell])
+            }  
+          })
+        }
+        else{
+          console.log("FDSLDKF")
+          newCell = value.substring(1);
+          newestCell = recursiveCellReplace(cellList, newCell)
+          console.log(newestCell)
+
+          cellList.forEach(cell=>{  
+            if(newestCell.includes(cell)){
+              newestCell = newestCell.replace(cell,value)
+            }  
+          })
+        }
+
         console.log(newestCell)
         console.log(eval(newestCell).toString())
-        newestCell = eval(newestCell).toString()
+      //  newestCell = eval(newestCell).toString()
          console.log(newestCell)
         try{
           (newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?setCellValues({...cellValues,[cell]:"#ERR"}):setCellValues({...cellValues,[cell]:eval(newestCell).toString()})
