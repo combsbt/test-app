@@ -59,7 +59,7 @@ export default function TEST_2_9() {
         // if included cell is another equation
         if(cellsCopy[testCell].substring(0,1)==="="){
           console.log('another')
-          
+          recursiveCellReplace(testCell, cellsCopy, cellList)
         }
         else{
           console.log("INCLUDES"+testCell)
