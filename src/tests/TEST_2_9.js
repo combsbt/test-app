@@ -39,6 +39,7 @@ export default function TEST_2_9() {
       if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
         console.log('eq')
         newCell = recursiveCellReplace(cell, cellsCopy, cellList)
+        console.log('RETURNED ' + newCell)
       }
       if(cellVals[cell]!==newCell){
         cellVals={...cellVals,[cell]:newCell}
@@ -47,31 +48,27 @@ export default function TEST_2_9() {
     setCellValues({...cellVals})
   },[cells])
 
-  function recursiveCellReplace(oldCell, cellsCopy, cellList){
-    let newCell = cellsCopy[oldCell]
-    cellList.forEach(cell=>{
-      console.log(cell + " test")
-      if(newCell && newCell.substring(0,1) && newCell.substring(0,1)==="="){
-        newCell=newCell.substring(1)
-        if(newCell.includes(cell)){
-          if(cellsCopy[cell] !== ""){
-            newCell = newCell.replace(cell, cellsCopy[cell])  
-          }
-          else{
-            newCell = "#ERR"
-          }
-          console.log(true)
-          console.log(newCell)
-          cellsCopy = {...cellsCopy, [oldCell]:newCell}
-          console.log(cellsCopy)
-          return(recursiveCellReplace(newCell, cellsCopy, cellList))
+  function recursiveCellReplace(cell, cellsCopy, cellList){
+    // cellsCopy[cell] starts with "="
+    let oldCell = cellsCopy[cell]
+    let containsList = []
+    cellList.forEach(testCell=>{
+      if(oldCell.includes(testCell)){
+        console.log("TEST " + testCell)
+        containsList.push(testCell)
+        // if included cell is another equation
+        if(cellsCopy[testCell].substring(0,1)==="="){
+          console.log('another')
+          
+        }
+        else{
+          console.log("INCLUDES"+testCell)
+          
         }
       }
-      
     })
-
-    return (newCell)
-
+    console.log("CONTAINS "+containsList)
+    //return(oldCell)
   }
 
   function handleCalc(id, value){
