@@ -33,27 +33,22 @@ export default function TEST_2_9() {
         cellList.push(columnList[j]+(i+1))
       }
     }
-    let finalList= {}
     cellList.map(cell=>{
+      console.log(cell, cellsCopy[cell])
       let newCell = cellsCopy[cell]
       if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
-        console.log(cell, cellsCopy[cell])
         console.log('eq')
-        let defList={}
-        finalList = recursiveCellReplace(cell, cellsCopy, cellList, defList, finalList)
-        console.log('RETURNED ' + finalList)
+        newCell = recursiveCellReplace(cell, cellsCopy, cellList)
+        console.log('RETURNED ' + newCell)
       }
       if(cellVals[cell]!==newCell){
         cellVals={...cellVals,[cell]:newCell}
       }
     })
-    console.log("FINALLIST")
-    console.log(finalList)
-    solveCells(finalList)
     setCellValues({...cellVals})
   },[cells])
 
-  function recursiveCellReplace(cell, cellsCopy, cellList, defList, finalList){
+  function recursiveCellReplace(cell, cellsCopy, cellList){
     // cellsCopy[cell] starts with "="
     let oldCell = cellsCopy[cell]
     let containsList = []
@@ -64,31 +59,16 @@ export default function TEST_2_9() {
         // if included cell is another equation
         if(cellsCopy[testCell].substring(0,1)==="="){
           console.log('another')
-          defList = {...defList,[testCell]:'anoth'}
-          recursiveCellReplace(testCell, cellsCopy, cellList, defList, finalList)
+          recursiveCellReplace(testCell, cellsCopy, cellList)
         }
         else{
           console.log("INCLUDES"+testCell)
-          //defList = {...defList,[testCell]:'final'}
-          finalList = {...finalList, [testCell]:cellsCopy[testCell]}
+          
         }
       }
     })
-    if(Object.keys(defList).length===0){
-      console.log("NODSFER")
-      console.log(oldCell)
-      finalList = {...finalList, [cell]:cellsCopy[cell]}
-    }
     console.log("CONTAINS "+containsList)
-    console.log("DEFLIST")
-    console.log(defList)
-    return(finalList)
-    //solveCells(finalList)
     //return(oldCell)
-  }
-
-  function solveCells(finalList){
-
   }
 
   function handleCalc(id, value){
