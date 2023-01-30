@@ -22,14 +22,48 @@ export default function TEST_2_9() {
     }
   }
 
-  // useEffect(()=>{
-  //   console.log("effect")
-  //   for(let i=0; i<cellList.length; i++){
-  //     console.log(cellList[i])
-  //     handleCalc(cellList[i])
-  //     console.log(cellList[i])
-  //   }
-  // },[cells])
+  useEffect(()=>{
+    
+    let cellVals = cells
+    let cellList = []
+    for(let i=0; i < ROWS; i++){
+      for(let j=0; j < columnList.length; j++){
+        cellList.push(columnList[j]+(i+1))
+      }
+    }
+    // console.log(cello)
+    cellList.forEach(cell=>{
+      console.log(cell)
+      if(cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
+        let newCell = cells[cell].substring(1);
+        
+        
+        let newestCell = recursiveCellReplace(cellList, newCell)
+        console.log(newestCell)
+
+        cellList.forEach(celler=>{  
+          if(newestCell.includes(celler)){
+            newestCell = newestCell.replace(celler,cells[celler])
+          }  
+        })
+      // console.log(newestCell)
+      //console.log(eval(newestCell).toString())
+      // //  newestCell = eval(newestCell).toString()
+      //    console.log(newestCell)
+      console.log({...cellVals})
+        try{
+          (newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?cellVals={...cellValues,[cell]:"#ERR"}:cellVals={...cellValues,[cell]:eval(newestCell).toString()}
+        } catch(error){
+          console.log(error)
+          cellVals={...cellValues,[cell]:"#ERR"}
+        }
+      }
+
+    })
+    console.log(cellVals)
+    setCellValues(cellVals)
+
+  },[cells])
 
   console.log("render")
 
@@ -48,8 +82,8 @@ export default function TEST_2_9() {
           document.getElementById(columnList[j]+(i+1)).focus();
         }}  >
           <input hidden={true} id={columnList[j]+(i+1)} type="text" value={cells[columnList[j]+(i+1)]} 
-          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1),e.target.value)}
-          onBlur={(e)=>handleCalc(columnList[j]+(i+1), e.target.value)} 
+          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(columnList[j]+(i+1))}
+          onBlur={()=>handleCalc(columnList[j]+(i+1))} 
           onChange={(e)=>{handleChange([e.target.id,e.target.value])}}/>
           {cellValues[columnList[j]+(i+1)]}
         </div>
@@ -84,61 +118,8 @@ export default function TEST_2_9() {
     
   }
 
-  function handleCalc(cello, value){
+  function handleCalc(cello){
     document.getElementById(cello).hidden=true;
-    console.log(value)
-
-    let cellList = []
-    for(let i=0; i < ROWS; i++){
-      for(let j=0; j < columnList.length; j++){
-        cellList.push(columnList[j]+(i+1))
-      }
-    }
-    // console.log(cello)
-    cellList.map(cell=>{
-      console.log(cell)
-      if(cells[cell]!==""&&cells[cell]!==undefined && cells[cell].substring(0,1)==="="){
-        
-        let newCell = ""
-        let newestCell = ""
-        if(cell!==cello){
-          newCell = cells[cell].substring(1);
-          newestCell = recursiveCellReplace(cellList, newCell)
-          console.log(newestCell)
-
-          cellList.forEach(cell=>{  
-            if(newestCell.includes(cell)){
-              newestCell = newestCell.replace(cell,cells[cell])
-            }  
-          })
-        }
-        else{
-          console.log("FDSLDKF")
-          newCell = value.substring(1);
-          newestCell = recursiveCellReplace(cellList, newCell)
-          console.log(newestCell)
-
-          cellList.forEach(cell=>{  
-            if(newestCell.includes(cell)){
-              newestCell = newestCell.replace(cell,value)
-            }  
-          })
-        }
-
-        console.log(newestCell)
-        console.log(eval(newestCell).toString())
-      //  newestCell = eval(newestCell).toString()
-         console.log(newestCell)
-        try{
-          (newestCell.includes("//")||eval(newestCell).toString()==="Infinity"||eval(newestCell).toString()==="NaN")?setCellValues({...cellValues,[cell]:"#ERR"}):setCellValues({...cellValues,[cell]:eval(newestCell).toString()})
-        } catch(error){
-          console.log(error)
-          setCellValues({...cellValues,[cell]:"#ERR"})
-        }
-      }
-
-    })
-
     
   }
 
