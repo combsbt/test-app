@@ -53,22 +53,48 @@ export default function TEST_2_9() {
       initPaths = {...initPaths,[eq]:paths}
     })
     console.log(initPaths)
-    console.log(initPaths["B3"])
+    pathFinder2("B1", initPaths)
+
+  },[cells])
+
+  function pathFinder2(cell, initPaths){
+    console.log(initPaths[cell])
     
-    if(initPaths && initPaths["B3"]){
-      let newPath = initPaths["B3"];
-      for(let i=0; i < initPaths["B3"].length; i++){
-        if(initPaths[initPaths["B3"][i]]){
-          console.log(initPaths["B3"][i])
-          console.log(newPath.indexOf(initPaths["B3"][i]))
-          newPath[newPath.indexOf(initPaths["B3"][i])] = initPaths[initPaths["B3"][i]]
+    if(initPaths && initPaths[cell]){
+      let newPath = initPaths[cell];
+      for(let i=0; i < initPaths[cell].length; i++){
+        if(initPaths[initPaths[cell][i]]){
+          console.log(initPaths[cell][i])
+          console.log(newPath.indexOf(initPaths[cell][i]))
+          newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]
         }
       }
       console.log(newPath)  
     }
-    
+  }
 
-  },[cells])
+  // function pathFinder2(eqList, initPaths){
+  //   console.log(initPaths[eqList[2]])
+  //   let newPaths = [];
+  //   for(let j=0; j < eqList.length; j++){
+  //     if(initPaths && initPaths[eqList[j]]){
+  //       let newPath = initPaths[eqList[j]];
+  //       for(let i=0; i < initPaths[eqList[j]].length; i++){
+  //         if(initPaths[initPaths[eqList[j]][i]]){
+  //           console.log(initPaths[eqList[j]][i])
+  //           console.log(newPath&&newPath.indexOf(initPaths[eqList[j]][i]))
+  //           if(newPath && newPath.indexOf(initPaths[eqList[j]][i])){
+  //             newPath[newPath.indexOf(initPaths[eqList[j]][i])] = initPaths[initPaths[eqList[j]][i]]
+  //           }
+            
+  //         }
+  //       }
+  //       console.log(newPath)
+  //       //pathFinder2(newPath, initPaths)  
+  //     }
+  //   }
+    
+  // }
 
   function pathFinder(cellsCopy, cellList, start, paths){
     cellList.forEach(cell=>{    
