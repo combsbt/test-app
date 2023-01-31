@@ -53,7 +53,7 @@ export default function TEST_2_9() {
       initPaths = {...initPaths,[eq]:paths}
     })
     console.log(initPaths)
-    pathFinder2("C1", initPaths)
+    pathFinder2("B3", initPaths)
 
   },[cells])
 
@@ -68,12 +68,24 @@ export default function TEST_2_9() {
           console.log(newPath.indexOf(initPaths[cell][i]))
           newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]
         }
+        else{
+          console.log(cell)
+          newPath[i]=cells[initPaths[cell][i]]
+        }
       }  
     }
     else{
       newPath=cells[cell]
     }
     console.log(newPath)
+    // if(newPath){
+    //   for(let i=0; i < newPath.length; i++){
+    //     console.log(newPath[i])
+
+    //     newPath[i] && newPath[i].forEach(cell=>pathFinder2[cell])
+    //   }  
+    // }
+    
 
   }
 
