@@ -53,7 +53,7 @@ export default function TEST_2_9() {
       initPaths = {...initPaths,[eq]:paths}
     })
     console.log(initPaths)
-    pathFinder2("B3", initPaths)
+    pathFinder2("C1", initPaths)
 
   },[cells])
 
@@ -70,9 +70,9 @@ export default function TEST_2_9() {
         }
       }  
     }
-    // else{
-    //   newPath=cell
-    // }
+    else{
+      newPath=cells[cell]
+    }
     console.log(newPath)
 
   }
