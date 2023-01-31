@@ -53,7 +53,7 @@ export default function TEST_2_9() {
       initPaths = {...initPaths,[eq]:paths}
     })
     console.log(initPaths)
-    pathFinder2("B3", initPaths)
+    pathFinder2("C1", initPaths)
 
   },[cells])
 
@@ -62,11 +62,21 @@ export default function TEST_2_9() {
     let newPath = 'err'
     if(initPaths && initPaths[cell]){
       newPath = initPaths[cell];
+      console.log(initPaths[cell].length)
+      if(!initPaths[cell].length){
+        newPath = eval(cells[cell].substring(1))
+      }
       for(let i=0; i < initPaths[cell].length; i++){
         if(initPaths[initPaths[cell][i]]){
           console.log(initPaths[cell][i])
           console.log(newPath.indexOf(initPaths[cell][i]))
-          newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]
+          console.log("LENGHT" + initPaths[initPaths[cell][i]].length)
+          if(initPaths[initPaths[cell][i]].length){
+            newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]  
+          }
+          else{
+            newPath[newPath.indexOf(initPaths[cell][i])] = eval(cells[initPaths[cell][i]].substring(1))
+          }
         }
         else{
           console.log(cell)
@@ -77,14 +87,17 @@ export default function TEST_2_9() {
     else{
       newPath=cells[cell]
     }
-    console.log(newPath)
-    // if(newPath){
-    //   for(let i=0; i < newPath.length; i++){
-    //     console.log(newPath[i])
-
-    //     newPath[i] && newPath[i].forEach(cell=>pathFinder2[cell])
-    //   }  
-    // }
+    console.log(cell + " " + newPath)
+    if(newPath && newPath !== undefined && Object.entries(newPath)){
+      for(let i=0; i < newPath.length; i++){
+        //console.log(Object.entries(newPath[i]).length)
+        if(newPath[i] && Object.entries(newPath[i]) && Object.entries(newPath[i]).length){
+          for(let j=0; j < Object.entries(newPath[i]).length; j++){
+            pathFinder2(newPath[i][0], initPaths)  
+          }
+        }
+      }  
+    }
     
 
   }
