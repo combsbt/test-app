@@ -53,48 +53,29 @@ export default function TEST_2_9() {
       initPaths = {...initPaths,[eq]:paths}
     })
     console.log(initPaths)
-    pathFinder2("B1", initPaths)
+    pathFinder2("B3", initPaths)
 
   },[cells])
 
   function pathFinder2(cell, initPaths){
     console.log(initPaths[cell])
-    
+    let newPath = 'err'
     if(initPaths && initPaths[cell]){
-      let newPath = initPaths[cell];
+      newPath = initPaths[cell];
       for(let i=0; i < initPaths[cell].length; i++){
         if(initPaths[initPaths[cell][i]]){
           console.log(initPaths[cell][i])
           console.log(newPath.indexOf(initPaths[cell][i]))
           newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]
         }
-      }
-      console.log(newPath)  
+      }  
     }
-  }
+    // else{
+    //   newPath=cell
+    // }
+    console.log(newPath)
 
-  // function pathFinder2(eqList, initPaths){
-  //   console.log(initPaths[eqList[2]])
-  //   let newPaths = [];
-  //   for(let j=0; j < eqList.length; j++){
-  //     if(initPaths && initPaths[eqList[j]]){
-  //       let newPath = initPaths[eqList[j]];
-  //       for(let i=0; i < initPaths[eqList[j]].length; i++){
-  //         if(initPaths[initPaths[eqList[j]][i]]){
-  //           console.log(initPaths[eqList[j]][i])
-  //           console.log(newPath&&newPath.indexOf(initPaths[eqList[j]][i]))
-  //           if(newPath && newPath.indexOf(initPaths[eqList[j]][i])){
-  //             newPath[newPath.indexOf(initPaths[eqList[j]][i])] = initPaths[initPaths[eqList[j]][i]]
-  //           }
-            
-  //         }
-  //       }
-  //       console.log(newPath)
-  //       //pathFinder2(newPath, initPaths)  
-  //     }
-  //   }
-    
-  // }
+  }
 
   function pathFinder(cellsCopy, cellList, start, paths){
     cellList.forEach(cell=>{    
