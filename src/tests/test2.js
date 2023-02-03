@@ -10,8 +10,9 @@ export default function TEST_2_9() {
   const [cells, setCells] = useState({})
   const [cellValues, setCellValues] = useState({})
 
-  console.log('test')
+  console.log('render')
 
+  //set initial cell values
   useEffect(()=>{
     let cellList = {}
     for(let i=0; i < ROWS; i++){
@@ -19,13 +20,14 @@ export default function TEST_2_9() {
         cellList[columnList[j]+(i+1)] = "";
       }
     }
-    console.log(cellList)
     setCells({...cellList})
     setCellValues({...cellList})
   },[])
 
+  //when cells change, update values
   useEffect(()=>{
     let cellsCopy = {...cells}
+// this is repeated, declare const at top
     let cellList = []
     for(let i=0; i < ROWS; i++){
       for(let j=0; j < columnList.length; j++){
@@ -33,84 +35,102 @@ export default function TEST_2_9() {
       }
     }
 
-    //find cells that are equations
+    //find cells that contain equations and add their IDs to eqList
     let eqList = []
-    cellList.map(cell=>{
-      if(cellsCopy[cell]!==""&&cellsCopy[cell]!==undefined && cellsCopy[cell].substring(0,1)==="="){
-        eqList.push(cell)
+    cellList.forEach(cellID=>{
+      if(cellsCopy[cellID]!==""&&cellsCopy[cellID]!==undefined && cellsCopy[cellID].substring(0,1)==="="){
+        eqList.push(cellID)
       }
     })
+
     console.log('eqList')
     console.log(eqList)
 
-    //find paths for each eq cell
-    let initPaths = {}
-    eqList.forEach(eq=>{
-      console.log(cellsCopy[eq])
-      let paths = [];
-      paths = pathFinder(cellsCopy, cellList, eq, paths)
-      console.log(paths)
-      initPaths = {...initPaths,[eq]:paths}
+    //make an object "refCells" with cellIDs as the keys
+    //and an array of cells they reference as values
+    let refCells = {}
+    eqList.forEach(cellID=>{
+      let refs = [];
+      refs = refsFinder(cellsCopy, cellList, cellID, refs)
+      refCells = {...refCells,[cellID]:refs}
     })
-    console.log(initPaths)
-    pathFinder2("B3", initPaths)
+    console.log('refCells')
+    console.log(refCells)
+
+    //
+    evaluateCell("B3", refCells)
 
   },[cells])
 
-  function pathFinder2(cell, initPaths){
-    console.log(initPaths[cell])
-    let newPath = 'err'
-    if(initPaths && initPaths[cell]){
-      newPath = initPaths[cell];
-      console.log(initPaths[cell].length)
-      if(!initPaths[cell].length){
-        newPath = eval(cells[cell].substring(1))
+  function evaluateCell(cell, refCells){
+
+    let references = undefined
+    if(refCells[cell]){
+      references = [...refCells[cell]]
+    }
+    console.log('references')
+    console.log(references)
+    let newRefs = '#ERR'
+
+    if(refCells && references){
+      newRefs = [...references];
+      console.log(references.length)
+      // if there are no references to other cells, evaluate the cell
+      if(!references.length){
+        newRefs = eval(cells[cell].substring(1))
       }
-      for(let i=0; i < initPaths[cell].length; i++){
-        if(initPaths[initPaths[cell][i]]){
-          console.log(initPaths[cell][i])
-          console.log(newPath.indexOf(initPaths[cell][i]))
-          console.log("LENGHT" + initPaths[initPaths[cell][i]].length)
-          if(initPaths[initPaths[cell][i]].length){
-            newPath[newPath.indexOf(initPaths[cell][i])] = initPaths[initPaths[cell][i]]  
+
+      // iterate through referenced equations 
+      for(let i=0; i < references.length; i++){
+        // if the referenced cell is an equation
+        if(refCells[references[i]] !== undefined){
+          console.log(references[i])
+          console.log(i)
+          console.log("LENGTH " + refCells[references[i]].length)
+          // if the referenced cell has its own references
+          // replace the cell with the array of references
+          if(refCells[references[i]].length){
+            newRefs[i] = refCells[references[i]]  
           }
+          // if there are no references in the referenced cell
+          // replace the cell with the evaluated equation
           else{
-            newPath[newPath.indexOf(initPaths[cell][i])] = eval(cells[initPaths[cell][i]].substring(1))
+            newRefs[newRefs.indexOf(references[i])] = eval(cells[references[i]].substring(1))
           }
         }
+        // if the referenced cell is not an equation
+        // replace the cell with the value
         else{
-          console.log(cell)
-          newPath[i]=cells[initPaths[cell][i]]
+          console.log(references[i])
+// more error handling needed
+          if(cells[references[i]]!==""){
+            newRefs[i]=cells[references[i]]  
+          }
+          else{
+            newRefs[i]="#ERR"
+          }
+          
         }
       }  
     }
     else{
-      newPath=cells[cell]
+      console.log('CELL NOT AN EQUATION')
     }
-    console.log(cell + " " + newPath)
-    // if(newPath && newPath !== undefined && Object.entries(newPath)){
-    //   for(let i=0; i < newPath.length; i++){
-    //     //console.log(Object.entries(newPath[i]).length)
-    //     if(newPath[i] && Object.entries(newPath[i]) && Object.entries(newPath[i]).length){
-    //       for(let j=0; j < Object.entries(newPath[i]).length; j++){
-    //         pathFinder2(newPath[i][0], initPaths)  
-    //       }
-    //     }
-    //   }  
-    // }
-    
 
+    // newRefs is now evaluated one pass deep
+    console.log(cell + " " + newRefs)
+    console.log(newRefs)
+
+    
   }
 
-  function pathFinder(cellsCopy, cellList, start, paths){
-    cellList.forEach(cell=>{    
-        if(cellsCopy[start].includes(cell)){
-          paths.push(cell)
-          console.log(cell)
-          //pathFinder(cellsCopy, cellList, cell, paths)
+  function refsFinder(cellsCopy, cellList, cellID, refs){
+    cellList.forEach(refID=>{    
+        if(cellsCopy[cellID].includes(refID)){
+          refs.push(refID)
         }
       })  
-    return paths
+    return refs
   }
 
   function handleCalc(id, value){

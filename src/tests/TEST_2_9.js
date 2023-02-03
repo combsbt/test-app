@@ -80,39 +80,36 @@ export default function TEST_2_9() {
         newRefs = eval(cells[cell].substring(1))
       }
 
-      // iterate through referenced equations 
-      for(let i=0; i < references.length; i++){
+      // iterate through referenced equations       
+      references.forEach((ref, index)=>{
         // if the referenced cell is an equation
-        if(refCells[references[i]] !== undefined){
-          console.log(references[i])
-          console.log(i)
-          console.log("LENGTH " + refCells[references[i]].length)
+        if(refCells[ref] !== undefined){
           // if the referenced cell has its own references
           // replace the cell with the array of references
-          if(refCells[references[i]].length){
-            newRefs[i] = refCells[references[i]]  
+          if(refCells[ref].length){
+            newRefs[index] = refCells[ref]  
           }
           // if there are no references in the referenced cell
           // replace the cell with the evaluated equation
           else{
-            newRefs[newRefs.indexOf(references[i])] = eval(cells[references[i]].substring(1))
+            newRefs[index] = eval(cells[ref].substring(1))
           }
         }
         // if the referenced cell is not an equation
         // replace the cell with the value
         else{
-          console.log(references[i])
+          console.log(ref)
 // more error handling needed
-          if(cells[references[i]]!==""){
-            newRefs[i]=cells[references[i]]  
+          if(cells[ref]!==""){
+            newRefs[index]=cells[ref]  
           }
           else{
-            newRefs[i]="#ERR"
+            newRefs[index]="#ERR"
           }
-          
         }
-      }  
-    }
+      })
+
+    }  
     else{
       console.log('CELL NOT AN EQUATION')
     }
@@ -121,7 +118,7 @@ export default function TEST_2_9() {
     console.log(cell + " " + newRefs)
     console.log(newRefs)
 
-    
+
   }
 
   function refsFinder(cellsCopy, cellList, cellID, refs){
