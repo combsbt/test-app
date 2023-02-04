@@ -70,7 +70,7 @@ export default function TEST_2_9() {
     }
     console.log('references')
     console.log(references)
-    let newRefs = '#ERR'
+    let newRefs = []
 
     if(refCells && references){
       newRefs = [...references];
@@ -101,7 +101,7 @@ export default function TEST_2_9() {
           console.log(ref)
 // more error handling needed
           if(cells[ref]!==""){
-            newRefs[index]=cells[ref]  
+            newRefs[index]=eval(cells[ref])  
           }
           else{
             newRefs[index]="#ERR"
@@ -112,13 +112,46 @@ export default function TEST_2_9() {
     }  
     else{
       console.log('CELL NOT AN EQUATION')
+      if(cells[cell]!==""){
+        return eval(cells[cell])  
+      }
+      else{
+        return "#ERR"
+      }
     }
 
     // newRefs is now evaluated one pass deep
     console.log(cell + " " + newRefs)
     console.log(newRefs)
 
-
+    // if more passes are needed
+    if(Object.keys(newRefs).length && newRefs.some(itm=>Object.keys(itm).length)){
+      let tester = []
+      newRefs.forEach((ref,index)=>{
+        let tester2 = []
+        if(ref !== '#ERR' && Object.keys(ref).length){
+          ref.forEach(innerRef=>{
+            let test = []
+            console.log('ref')
+            console.log(ref)
+            console.log('innerRef')
+            console.log(innerRef)
+            test = evaluateCell(innerRef, refCells)
+            console.log('test')
+            console.log(test)
+            tester2.push(test)
+          })
+        }
+        tester.push(tester2)
+        newRefs[index]=tester2
+      })
+      console.log('tester')
+      console.log(tester)
+      return newRefs
+    }
+    else{
+      return newRefs
+    }
   }
 
   function refsFinder(cellsCopy, cellList, cellID, refs){
@@ -135,6 +168,7 @@ export default function TEST_2_9() {
     let newCells = {...cells}
     newCells[id] = value
     setCells({...newCells})
+    setCellValues({...newCells})
   }
   
   let jsxArray = []
