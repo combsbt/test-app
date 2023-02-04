@@ -10,8 +10,6 @@ export default function TEST_2_9() {
   const [cells, setCells] = useState({})
   const [cellValues, setCellValues] = useState({})
 
-  console.log('render')
-
   //set initial cell values
   useEffect(()=>{
     let initialCells = {}
@@ -30,8 +28,6 @@ export default function TEST_2_9() {
     let reduceList = {...cellsCopy}
 
     reduceList = replaceCellIDs(cellsCopy, reduceList)
-    console.log('reduceList')
-    console.log(reduceList)
     evaluateCells(reduceList)
 
   },[cells])
@@ -39,9 +35,6 @@ export default function TEST_2_9() {
   function evaluateCells(reduceList){
     if(Object.keys(reduceList).length){
       Object.keys(reduceList).forEach(cellID=>{
-        console.log('test')
-        console.log(cellID)
-        console.log(reduceList[cellID])
         if(reduceList[cellID].includes("#ERR") || reduceList[cellID].includes("//")){
           reduceList = {...reduceList, [cellID]:"#ERR"}
         }
@@ -73,7 +66,6 @@ export default function TEST_2_9() {
 
       })  
     }
-    console.log(reduceList)
     setCellValues({...reduceList})
   }
 
@@ -110,7 +102,6 @@ export default function TEST_2_9() {
       let list = []
       Object.keys(cellsCopy).forEach(cellID=>{
       Object.keys(cellsCopy).forEach(reduceID=>{
-          //console.log(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID))
           if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
             list.push(true)
           }
