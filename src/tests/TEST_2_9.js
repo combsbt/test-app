@@ -64,23 +64,23 @@ export default function TEST_2_9() {
     let newRefCells = {}
     //evaluateCell("B3", refCells, newRefCells)
     let reduceList = {}
+    cellList.forEach(cellID=>{
+      reduceList={...reduceList, [cellID]:cellsCopy[cellID]}
+    })
     replaceCellIDs(cellList, cellsCopy, reduceList)
 
   },[cells])
 
   function replaceCellIDs(cellList, cellsCopy, reduceList){
-    cellList.forEach(cellID=>{
-      reduceList={...reduceList, [cellID]:cellsCopy[cellID]}
-    })
 
     cellList.forEach(reduceID=>{
       cellList.forEach(cellID=>{    
-        if(cellsCopy[reduceID] && cellsCopy[reduceID].includes(cellID)){
-          if(cellsCopy[cellID].substring(0,1)==="="){
-            reduceList = {...reduceList, [reduceID]:cellsCopy[reduceID].replace(cellID, cellsCopy[cellID].substring(1))}  
+        if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
+          if(reduceList[cellID].substring(0,1)==="="){
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID].substring(1)+")")}  
           }
           else{
-            reduceList = {...reduceList, [reduceID]:cellsCopy[reduceID].replace(cellID, cellsCopy[cellID])}
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID]+")")}
           }
           
         }
@@ -90,13 +90,13 @@ export default function TEST_2_9() {
     console.log('reduceList')
     console.log(reduceList)
 
-    // let more = isMore(cellList, reduceList)
-    // console.log('more')
-    // console.log(more)
+    let more = isMore(cellList, reduceList)
+    console.log('more')
+    console.log(more)
     
-    // if(more){
-    //   replaceCellIDs(cellList, cellsCopy, reduceList)
-    // }
+    if(more){
+      replaceCellIDs(cellList, cellsCopy, reduceList)
+    }
   }
 
   function isMore(cellList, reduceList){
