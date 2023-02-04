@@ -28,9 +28,8 @@ export default function TEST_2_9() {
   useEffect(()=>{
     let cellsCopy = {...cells}
     let reduceList = {...cellsCopy}
-    let preventLoop = 0
 
-    reduceList = replaceCellIDs(cellsCopy, reduceList, preventLoop)
+    reduceList = replaceCellIDs(cellsCopy, reduceList)
     console.log('reduceList')
     console.log(reduceList)
     evaluateCells(reduceList)
@@ -78,15 +77,15 @@ export default function TEST_2_9() {
     setCellValues({...reduceList})
   }
 
-  function replaceCellIDs(cellsCopy, reduceList, preventLoop){
+  function replaceCellIDs(cellsCopy, reduceList){
 
     Object.keys(cellsCopy).forEach(reduceID=>{
       Object.keys(cellsCopy).forEach(cellID=>{    
         if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
-          if(preventLoop>(ROWS*columnList.length)){
+          if(cellID==reduceID){
             reduceList = {...reduceList, [reduceID]:"#ERR"}
           }
-          if(reduceList[cellID].substring(0,1)==="="){
+          else if(reduceList[cellID].substring(0,1)==="="){
             reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
              reduceList[cellID].substring(1)===""?"#ERR":"("+reduceList[cellID].substring(1)+")")}  
           }
@@ -99,10 +98,9 @@ export default function TEST_2_9() {
       }) 
     })
 
-    let more = isMore(cellsCopy, reduceList, preventLoop)
+    let more = isMore(cellsCopy, reduceList)
     if(more){
-      preventLoop = preventLoop + 1
-      reduceList = replaceCellIDs(cellsCopy, reduceList, preventLoop)
+      reduceList = replaceCellIDs(cellsCopy, reduceList)
     }
     
     return(reduceList)
