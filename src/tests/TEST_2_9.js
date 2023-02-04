@@ -46,6 +46,9 @@ export default function TEST_2_9() {
     console.log('eqList')
     console.log(eqList)
 
+
+
+
     //make an object "refCells" with cellIDs as the keys
     //and an array of cells they reference as values
     let refCells = {}
@@ -58,11 +61,60 @@ export default function TEST_2_9() {
     console.log(refCells)
 
     //
-    evaluateCell("B3", refCells)
+    let newRefCells = {}
+    //evaluateCell("B3", refCells, newRefCells)
+    let reduceList = {}
+    replaceCellIDs(cellList, cellsCopy, reduceList)
 
   },[cells])
 
-  function evaluateCell(cell, refCells){
+  function replaceCellIDs(cellList, cellsCopy, reduceList){
+    cellList.forEach(cellID=>{
+      reduceList={...reduceList, [cellID]:cellsCopy[cellID]}
+    })
+
+    cellList.forEach(reduceID=>{
+      cellList.forEach(cellID=>{    
+        if(cellsCopy[reduceID] && cellsCopy[reduceID].includes(cellID)){
+          if(cellsCopy[cellID].substring(0,1)==="="){
+            reduceList = {...reduceList, [reduceID]:cellsCopy[reduceID].replace(cellID, cellsCopy[cellID].substring(1))}  
+          }
+          else{
+            reduceList = {...reduceList, [reduceID]:cellsCopy[reduceID].replace(cellID, cellsCopy[cellID])}
+          }
+          
+        }
+      }) 
+    })
+
+    console.log('reduceList')
+    console.log(reduceList)
+
+    // let more = isMore(cellList, reduceList)
+    // console.log('more')
+    // console.log(more)
+    
+    // if(more){
+    //   replaceCellIDs(cellList, cellsCopy, reduceList)
+    // }
+  }
+
+  function isMore(cellList, reduceList){
+      let list = [];
+      cellList.forEach(cellID=>{
+      cellList.forEach(reduceID=>{
+          console.log(reduceList[cellID].includes(reduceID))
+          if(reduceList[cellID].includes(reduceID)){
+            list.push(true)
+          }
+        })
+      })
+      list.push(false)
+      return list.includes(true)
+    }
+
+
+  function evaluateCell(cell, refCells, newRefCells){
 
     let references = undefined
     if(refCells[cell]){
@@ -122,48 +174,58 @@ export default function TEST_2_9() {
 
     // newRefs is now evaluated one pass deep
     console.log(cell + " " + newRefs)
+    console.log('newRefs')
     console.log(newRefs)
 
+    
+    references.forEach((ref, index)=>{
+      newRefCells = {...newRefCells, [ref]:cells[cell].replace(ref, newRefs[index])}
+    })
+    console.log('newRefCells')
+    console.log(newRefCells)
+        
+
     let newerRefs = []
-    let newRefCells = {}
+    
     if(newRefs && Object.keys(newRefs).length){
       newerRefs=[...newRefs]
     }
 
     // if more passes are needed
-    if(Object.keys(newerRefs).length && newerRefs.some(itm=>Object.keys(itm).length)){
-      let tester = []
-      newerRefs.forEach((ref,index)=>{
-        let tester2 = []
-        if(ref !== '#ERR' && Object.keys(ref).length){
-          ref.forEach((innerRef,innerIndex)=>{
-            let test = []
-            console.log('ref')
-            console.log(ref)
-            console.log('innerRef')
-            console.log(innerRef)
-            test = evaluateCell(innerRef, refCells)
-            console.log('test')
-            console.log(test)
-            tester2.push(test)
-            let itm = newRefs[index][innerIndex]
-            newRefCells={...newRefCells,[itm]:test}
-          })
-        }
-        tester.push(tester2)
-        newerRefs[index]=tester2
-      })
-      console.log('tester')
-      console.log(tester)
-      console.log('newRefs')
-      console.log(newRefs)
-      console.log('newRefCells')
-      console.log(newRefCells)
-      return newerRefs
-    }
-    else{
-      return newerRefs
-    }
+    // if(Object.keys(newerRefs).length && newerRefs.some(itm=>Object.keys(itm).length)){
+    //   let tester = []
+    //   newerRefs.forEach((ref,index)=>{
+    //     let tester2 = []
+    //     if(ref !== '#ERR' && Object.keys(ref).length){
+    //       ref.forEach((innerRef,innerIndex)=>{
+    //         let test = []
+    //         console.log('ref')
+    //         console.log(ref)
+    //         console.log('innerRef')
+    //         console.log(innerRef)
+    //         test = evaluateCell(innerRef, refCells, newRefCells)
+    //         console.log('test')
+    //         console.log(test)
+    //         tester2.push(test)
+    //         let itm = newRefs[index][innerIndex]
+    //         newRefCells={...newRefCells,[itm]:test}
+    //       })
+    //     }
+    //     tester.push(tester2)
+    //     newerRefs[index]=tester2
+    //   })
+    //   console.log('tester')
+    //   console.log(tester)
+    //   console.log('newRefs')
+    //   console.log(newRefs)
+    //   console.log('newRefCells')
+    //   console.log(newRefCells)
+    //   return newerRefs
+    // }
+    // else{
+    //   return newerRefs
+    // }
+  
   }
 
   function refsFinder(cellsCopy, cellList, cellID, refs){
