@@ -14,67 +14,31 @@ export default function TEST_2_9() {
 
   //set initial cell values
   useEffect(()=>{
-    let cellList = {}
+    let initialCells = {}
     for(let i=0; i < ROWS; i++){
       for(let j=0; j < columnList.length; j++){
-        cellList[columnList[j]+(i+1)] = "";
+        initialCells[columnList[j]+(i+1)] = "";
       }
     }
-    setCells({...cellList})
-    setCellValues({...cellList})
+    setCells({...initialCells})
+    setCellValues({...initialCells})
   },[])
 
   //when cells change, update values
   useEffect(()=>{
     let cellsCopy = {...cells}
-// this is repeated, declare const at top
-    let cellList = []
-    for(let i=0; i < ROWS; i++){
-      for(let j=0; j < columnList.length; j++){
-        cellList.push(columnList[j]+(i+1))
-      }
-    }
+    let reduceList = {...cellsCopy}
 
-    //find cells that contain equations and add their IDs to eqList
-    let eqList = []
-    cellList.forEach(cellID=>{
-      if(cellsCopy[cellID]!==""&&cellsCopy[cellID]!==undefined && cellsCopy[cellID].substring(0,1)==="="){
-        eqList.push(cellID)
-      }
-    })
-
-    console.log('eqList')
-    console.log(eqList)
-
-
-
-
-    //make an object "refCells" with cellIDs as the keys
-    //and an array of cells they reference as values
-    let refCells = {}
-    eqList.forEach(cellID=>{
-      let refs = [];
-      refs = refsFinder(cellsCopy, cellList, cellID, refs)
-      refCells = {...refCells,[cellID]:refs}
-    })
-    console.log('refCells')
-    console.log(refCells)
-
-    //
-    let newRefCells = {}
-    //evaluateCell("B3", refCells, newRefCells)
-    let reduceList = {}
-    cellList.forEach(cellID=>{
-      reduceList={...reduceList, [cellID]:cellsCopy[cellID]}
-    })
-    replaceCellIDs(cellList, cellsCopy, reduceList)
+    reduceList = replaceCellIDs(cellsCopy, reduceList)
+    console.log('reduceList')
+    console.log(reduceList)
 
   },[cells])
 
-  function replaceCellIDs(cellList, cellsCopy, reduceList){
+  function replaceCellIDs(cellsCopy, reduceList){
 
-    cellList.forEach(reduceID=>{
-      cellList.forEach(cellID=>{    
+    Object.keys(cellsCopy).forEach(reduceID=>{
+      Object.keys(cellsCopy).forEach(cellID=>{    
         if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
           if(reduceList[cellID].substring(0,1)==="="){
             reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID].substring(1)+")")}  
@@ -86,25 +50,21 @@ export default function TEST_2_9() {
         }
       }) 
     })
-
-    console.log('reduceList')
-    console.log(reduceList)
-
-    let more = isMore(cellList, reduceList)
-    console.log('more')
-    console.log(more)
     
+    let more = isMore(cellsCopy, reduceList)
     if(more){
-      replaceCellIDs(cellList, cellsCopy, reduceList)
+      reduceList = replaceCellIDs(cellsCopy, reduceList)
     }
+    
+    return(reduceList)
   }
 
-  function isMore(cellList, reduceList){
+  function isMore(cellsCopy, reduceList){
       let list = [];
-      cellList.forEach(cellID=>{
-      cellList.forEach(reduceID=>{
-          console.log(reduceList[cellID].includes(reduceID))
-          if(reduceList[cellID].includes(reduceID)){
+      Object.keys(cellsCopy).forEach(cellID=>{
+      Object.keys(cellsCopy).forEach(reduceID=>{
+          //console.log(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID))
+          if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
             list.push(true)
           }
         })
@@ -113,129 +73,6 @@ export default function TEST_2_9() {
       return list.includes(true)
     }
 
-
-  function evaluateCell(cell, refCells, newRefCells){
-
-    let references = undefined
-    if(refCells[cell]){
-      references = [...refCells[cell]]
-    }
-    console.log('references')
-    console.log(references)
-    let newRefs = []
-
-    if(refCells && references){
-      newRefs = [...references];
-      console.log(references.length)
-      // if there are no references to other cells, evaluate the cell
-      if(!references.length){
-        newRefs = eval(cells[cell].substring(1))
-      }
-
-      // iterate through referenced equations       
-      references.forEach((ref, index)=>{
-        // if the referenced cell is an equation
-        if(refCells[ref] !== undefined){
-          // if the referenced cell has its own references
-          // replace the cell with the array of references
-          if(refCells[ref].length){
-            newRefs[index] = refCells[ref]  
-          }
-          // if there are no references in the referenced cell
-          // replace the cell with the evaluated equation
-          else{
-            newRefs[index] = eval(cells[ref].substring(1))
-          }
-        }
-        // if the referenced cell is not an equation
-        // replace the cell with the value
-        else{
-          console.log(ref)
-// more error handling needed
-          if(cells[ref]!==""){
-            newRefs[index]=eval(cells[ref])  
-          }
-          else{
-            newRefs[index]="#ERR"
-          }
-        }
-      })
-
-    }  
-    else{
-      console.log('CELL NOT AN EQUATION')
-      if(cells[cell]!==""){
-        return eval(cells[cell])  
-      }
-      else{
-        return "#ERR"
-      }
-    }
-
-    // newRefs is now evaluated one pass deep
-    console.log(cell + " " + newRefs)
-    console.log('newRefs')
-    console.log(newRefs)
-
-    
-    references.forEach((ref, index)=>{
-      newRefCells = {...newRefCells, [ref]:cells[cell].replace(ref, newRefs[index])}
-    })
-    console.log('newRefCells')
-    console.log(newRefCells)
-        
-
-    let newerRefs = []
-    
-    if(newRefs && Object.keys(newRefs).length){
-      newerRefs=[...newRefs]
-    }
-
-    // if more passes are needed
-    // if(Object.keys(newerRefs).length && newerRefs.some(itm=>Object.keys(itm).length)){
-    //   let tester = []
-    //   newerRefs.forEach((ref,index)=>{
-    //     let tester2 = []
-    //     if(ref !== '#ERR' && Object.keys(ref).length){
-    //       ref.forEach((innerRef,innerIndex)=>{
-    //         let test = []
-    //         console.log('ref')
-    //         console.log(ref)
-    //         console.log('innerRef')
-    //         console.log(innerRef)
-    //         test = evaluateCell(innerRef, refCells, newRefCells)
-    //         console.log('test')
-    //         console.log(test)
-    //         tester2.push(test)
-    //         let itm = newRefs[index][innerIndex]
-    //         newRefCells={...newRefCells,[itm]:test}
-    //       })
-    //     }
-    //     tester.push(tester2)
-    //     newerRefs[index]=tester2
-    //   })
-    //   console.log('tester')
-    //   console.log(tester)
-    //   console.log('newRefs')
-    //   console.log(newRefs)
-    //   console.log('newRefCells')
-    //   console.log(newRefCells)
-    //   return newerRefs
-    // }
-    // else{
-    //   return newerRefs
-    // }
-  
-  }
-
-  function refsFinder(cellsCopy, cellList, cellID, refs){
-    cellList.forEach(refID=>{    
-        if(cellsCopy[cellID].includes(refID)){
-          refs.push(refID)
-        }
-      })  
-    return refs
-  }
 
   function handleCalc(id, value){
     document.getElementById(id).hidden=true;

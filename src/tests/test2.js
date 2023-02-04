@@ -46,6 +46,9 @@ export default function TEST_2_9() {
     console.log('eqList')
     console.log(eqList)
 
+
+
+
     //make an object "refCells" with cellIDs as the keys
     //and an array of cells they reference as values
     let refCells = {}
@@ -58,11 +61,60 @@ export default function TEST_2_9() {
     console.log(refCells)
 
     //
-    evaluateCell("B3", refCells)
+    let newRefCells = {}
+    //evaluateCell("B3", refCells, newRefCells)
+    let reduceList = {}
+    cellList.forEach(cellID=>{
+      reduceList={...reduceList, [cellID]:cellsCopy[cellID]}
+    })
+    replaceCellIDs(cellList, cellsCopy, reduceList)
 
   },[cells])
 
-  function evaluateCell(cell, refCells){
+  function replaceCellIDs(cellList, cellsCopy, reduceList){
+
+    cellList.forEach(reduceID=>{
+      cellList.forEach(cellID=>{    
+        if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
+          if(reduceList[cellID].substring(0,1)==="="){
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID].substring(1)+")")}  
+          }
+          else{
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID]+")")}
+          }
+          
+        }
+      }) 
+    })
+
+    console.log('reduceList')
+    console.log(reduceList)
+
+    let more = isMore(cellList, reduceList)
+    console.log('more')
+    console.log(more)
+    
+    if(more){
+      replaceCellIDs(cellList, cellsCopy, reduceList)
+    }
+  }
+
+  function isMore(cellList, reduceList){
+      let list = [];
+      cellList.forEach(cellID=>{
+      cellList.forEach(reduceID=>{
+          console.log(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID))
+          if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
+            list.push(true)
+          }
+        })
+      })
+      list.push(false)
+      return list.includes(true)
+    }
+
+
+  function evaluateCell(cell, refCells, newRefCells){
 
     let references = undefined
     if(refCells[cell]){
@@ -70,7 +122,7 @@ export default function TEST_2_9() {
     }
     console.log('references')
     console.log(references)
-    let newRefs = '#ERR'
+    let newRefs = []
 
     if(refCells && references){
       newRefs = [...references];
@@ -80,48 +132,100 @@ export default function TEST_2_9() {
         newRefs = eval(cells[cell].substring(1))
       }
 
-      // iterate through referenced equations 
-      for(let i=0; i < references.length; i++){
+      // iterate through referenced equations       
+      references.forEach((ref, index)=>{
         // if the referenced cell is an equation
-        if(refCells[references[i]] !== undefined){
-          console.log(references[i])
-          console.log(i)
-          console.log("LENGTH " + refCells[references[i]].length)
+        if(refCells[ref] !== undefined){
           // if the referenced cell has its own references
           // replace the cell with the array of references
-          if(refCells[references[i]].length){
-            newRefs[i] = refCells[references[i]]  
+          if(refCells[ref].length){
+            newRefs[index] = refCells[ref]  
           }
           // if there are no references in the referenced cell
           // replace the cell with the evaluated equation
           else{
-            newRefs[newRefs.indexOf(references[i])] = eval(cells[references[i]].substring(1))
+            newRefs[index] = eval(cells[ref].substring(1))
           }
         }
         // if the referenced cell is not an equation
         // replace the cell with the value
         else{
-          console.log(references[i])
+          console.log(ref)
 // more error handling needed
-          if(cells[references[i]]!==""){
-            newRefs[i]=cells[references[i]]  
+          if(cells[ref]!==""){
+            newRefs[index]=eval(cells[ref])  
           }
           else{
-            newRefs[i]="#ERR"
+            newRefs[index]="#ERR"
           }
-          
         }
-      }  
-    }
+      })
+
+    }  
     else{
       console.log('CELL NOT AN EQUATION')
+      if(cells[cell]!==""){
+        return eval(cells[cell])  
+      }
+      else{
+        return "#ERR"
+      }
     }
 
     // newRefs is now evaluated one pass deep
     console.log(cell + " " + newRefs)
+    console.log('newRefs')
     console.log(newRefs)
 
     
+    references.forEach((ref, index)=>{
+      newRefCells = {...newRefCells, [ref]:cells[cell].replace(ref, newRefs[index])}
+    })
+    console.log('newRefCells')
+    console.log(newRefCells)
+        
+
+    let newerRefs = []
+    
+    if(newRefs && Object.keys(newRefs).length){
+      newerRefs=[...newRefs]
+    }
+
+    // if more passes are needed
+    // if(Object.keys(newerRefs).length && newerRefs.some(itm=>Object.keys(itm).length)){
+    //   let tester = []
+    //   newerRefs.forEach((ref,index)=>{
+    //     let tester2 = []
+    //     if(ref !== '#ERR' && Object.keys(ref).length){
+    //       ref.forEach((innerRef,innerIndex)=>{
+    //         let test = []
+    //         console.log('ref')
+    //         console.log(ref)
+    //         console.log('innerRef')
+    //         console.log(innerRef)
+    //         test = evaluateCell(innerRef, refCells, newRefCells)
+    //         console.log('test')
+    //         console.log(test)
+    //         tester2.push(test)
+    //         let itm = newRefs[index][innerIndex]
+    //         newRefCells={...newRefCells,[itm]:test}
+    //       })
+    //     }
+    //     tester.push(tester2)
+    //     newerRefs[index]=tester2
+    //   })
+    //   console.log('tester')
+    //   console.log(tester)
+    //   console.log('newRefs')
+    //   console.log(newRefs)
+    //   console.log('newRefCells')
+    //   console.log(newRefCells)
+    //   return newerRefs
+    // }
+    // else{
+    //   return newerRefs
+    // }
+  
   }
 
   function refsFinder(cellsCopy, cellList, cellID, refs){
@@ -138,6 +242,7 @@ export default function TEST_2_9() {
     let newCells = {...cells}
     newCells[id] = value
     setCells({...newCells})
+    setCellValues({...newCells})
   }
   
   let jsxArray = []
