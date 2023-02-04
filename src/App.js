@@ -13,6 +13,11 @@ import TEST_2_9 from './tests/TEST_2_9';
 
 function App() {
   
+  let jsxArray = []
+  for(let i=1; i<10; i++){
+    jsxArray.push(<div key={i}><a href={'/Test_2_'+i}>{"Test_2_"+i}</a></div>)
+  }
+
   return (
     <BrowserRouter>
       <div className="App">
@@ -27,6 +32,9 @@ function App() {
             <Route path='/Test_2_8' element={<TEST_2_8/>} />
             <Route path='/Test_2_9' element={<TEST_2_9/>} />
           </Routes>
+          <div key="links">
+              {jsxArray}
+          </div>
       </div>
     </BrowserRouter>
   );
