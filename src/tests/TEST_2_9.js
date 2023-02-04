@@ -124,13 +124,19 @@ export default function TEST_2_9() {
     console.log(cell + " " + newRefs)
     console.log(newRefs)
 
+    let newerRefs = []
+    let newRefCells = {}
+    if(newRefs && Object.keys(newRefs).length){
+      newerRefs=[...newRefs]
+    }
+
     // if more passes are needed
-    if(Object.keys(newRefs).length && newRefs.some(itm=>Object.keys(itm).length)){
+    if(Object.keys(newerRefs).length && newerRefs.some(itm=>Object.keys(itm).length)){
       let tester = []
-      newRefs.forEach((ref,index)=>{
+      newerRefs.forEach((ref,index)=>{
         let tester2 = []
         if(ref !== '#ERR' && Object.keys(ref).length){
-          ref.forEach(innerRef=>{
+          ref.forEach((innerRef,innerIndex)=>{
             let test = []
             console.log('ref')
             console.log(ref)
@@ -140,17 +146,23 @@ export default function TEST_2_9() {
             console.log('test')
             console.log(test)
             tester2.push(test)
+            let itm = newRefs[index][innerIndex]
+            newRefCells={...newRefCells,[itm]:test}
           })
         }
         tester.push(tester2)
-        newRefs[index]=tester2
+        newerRefs[index]=tester2
       })
       console.log('tester')
       console.log(tester)
-      return newRefs
+      console.log('newRefs')
+      console.log(newRefs)
+      console.log('newRefCells')
+      console.log(newRefCells)
+      return newerRefs
     }
     else{
-      return newRefs
+      return newerRefs
     }
   }
 
