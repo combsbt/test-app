@@ -28,39 +28,88 @@ export default function TEST_2_9() {
   useEffect(()=>{
     let cellsCopy = {...cells}
     let reduceList = {...cellsCopy}
+    let preventLoop = 0
 
-    reduceList = replaceCellIDs(cellsCopy, reduceList)
+    reduceList = replaceCellIDs(cellsCopy, reduceList, preventLoop)
     console.log('reduceList')
     console.log(reduceList)
+    evaluateCells(reduceList)
 
   },[cells])
 
-  function replaceCellIDs(cellsCopy, reduceList){
+  function evaluateCells(reduceList){
+    if(Object.keys(reduceList).length){
+      Object.keys(reduceList).forEach(cellID=>{
+        console.log('test')
+        console.log(cellID)
+        console.log(reduceList[cellID])
+        if(reduceList[cellID].includes("#ERR") || reduceList[cellID].includes("//")){
+          reduceList = {...reduceList, [cellID]:"#ERR"}
+        }
+
+        if(reduceList[cellID].substring(0,1)==="="){
+          let result = "#ERR"
+          try{
+            result = isNaN(eval(reduceList[cellID].substring(1)))?"#ERR":eval(reduceList[cellID].substring(1))
+          }
+          catch{
+            result = "#ERR"
+          }
+          reduceList = {...reduceList, [cellID]:result}
+        }
+        else if(reduceList[cellID].substring(0,1)!=="=" && reduceList[cellID]!==""){
+          let result = "#ERR"
+          try{
+            result = isNaN(parseInt(reduceList[cellID]))?reduceList[cellID]:parseInt(reduceList[cellID])
+          }
+          catch{
+            result = "#ERR"
+          }
+          reduceList = {...reduceList, [cellID]:result}
+        }
+
+        if(reduceList[cellID].toString().includes("Infinity")){
+          reduceList = {...reduceList, [cellID]:"#ERR"} 
+        }
+
+      })  
+    }
+    console.log(reduceList)
+    setCellValues({...reduceList})
+  }
+
+  function replaceCellIDs(cellsCopy, reduceList, preventLoop){
 
     Object.keys(cellsCopy).forEach(reduceID=>{
       Object.keys(cellsCopy).forEach(cellID=>{    
         if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
+          if(preventLoop>(ROWS*columnList.length)){
+            reduceList = {...reduceList, [reduceID]:"#ERR"}
+          }
           if(reduceList[cellID].substring(0,1)==="="){
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID].substring(1)+")")}  
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
+             reduceList[cellID].substring(1)===""?"#ERR":"("+reduceList[cellID].substring(1)+")")}  
           }
           else{
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID, "("+reduceList[cellID]+")")}
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
+             reduceList[cellID]===""?"#ERR":"("+reduceList[cellID]+")")}
           }
           
         }
       }) 
     })
-    
-    let more = isMore(cellsCopy, reduceList)
+
+    let more = isMore(cellsCopy, reduceList, preventLoop)
     if(more){
-      reduceList = replaceCellIDs(cellsCopy, reduceList)
+      preventLoop = preventLoop + 1
+      reduceList = replaceCellIDs(cellsCopy, reduceList, preventLoop)
     }
     
     return(reduceList)
   }
 
   function isMore(cellsCopy, reduceList){
-      let list = [];
+      let list = []
       Object.keys(cellsCopy).forEach(cellID=>{
       Object.keys(cellsCopy).forEach(reduceID=>{
           //console.log(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID))
