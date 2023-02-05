@@ -1,4 +1,4 @@
-.grid {
+.grid2 {
   display: inline-grid;
   grid-template-columns: 30px 150px 150px 150px;
   grid-gap: 1px;
@@ -7,7 +7,7 @@
   color: #333;
 }
 
-.cell {
+.cell2 {
   background: white;
   text-align: left;
   padding: 2px 5px;
@@ -18,7 +18,7 @@
   font-weight: bold;
 }
 
-.cell input {
+.cell2 input {
   border: none;
   width: 100%;
 }

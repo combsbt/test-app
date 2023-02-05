@@ -122,15 +122,15 @@ export default function TEST_2_9() {
   
   let jsxArray = []
   for(let i=0; i < columnList.length; i++){
-    jsxArray.push(<div key={columnList[i]} className="cell header">{columnList[i]}</div>)
+    jsxArray.push(<div key={columnList[i]} className="cell2 header">{columnList[i]}</div>)
   }  
   let jsxArray2 = []
   for(let i=0; i < ROWS; i++){
-    jsxArray2.push(<div key={"header"+(i+1)} className="cell header">{i+1}</div>)
+    jsxArray2.push(<div key={"header"+(i+1)} className="cell2 header">{i+1}</div>)
     for(let j=0; j < columnList.length; j++){
       let display = cellValues[columnList[j]+(i+1)]
       jsxArray2.push(   
-        <div key={"key"+columnList[j]+(i+1)} className="cell" data-test={columnList[j]+(i+1)} 
+        <div key={"key"+columnList[j]+(i+1)} className="cell2" data-test={columnList[j]+(i+1)} 
         onClick={()=>{
           document.getElementById(columnList[j]+(i+1)).hidden=false;
           document.getElementById(columnList[j]+(i+1)).focus();
@@ -147,8 +147,8 @@ export default function TEST_2_9() {
   return (
     <div style={{textAlign:"left", padding:"20px"}}>
       <h2>Calculation Sheet</h2>
-      <div className="grid" style={{gridTemplateColumns: "30px "+gridColumns.repeat(columnList.length)}}>
-        <div className="cell"></div>
+      <div className="grid2" style={{gridTemplateColumns: "30px "+gridColumns.repeat(columnList.length)}}>
+        <div className="cell2"></div>
         {jsxArray}
         {jsxArray2}
       </div>

@@ -10,11 +10,12 @@ import TEST_2_6 from './tests/TEST_2_6';
 import TEST_2_7 from './tests/TEST_2_7';
 import TEST_2_8 from './tests/TEST_2_8';
 import TEST_2_9 from './tests/TEST_2_9';
+import TEST_2_10 from './tests/TEST_2_10';
 
 function App() {
   
   let jsxArray = []
-  for(let i=1; i<10; i++){
+  for(let i=1; i<11; i++){
     jsxArray.push(<div key={i}><a href={'/Test_2_'+i}>{"Test_2_"+i}</a></div>)
   }
 
@@ -31,8 +32,9 @@ function App() {
             <Route path='/Test_2_7' element={<TEST_2_7/>} />
             <Route path='/Test_2_8' element={<TEST_2_8/>} />
             <Route path='/Test_2_9' element={<TEST_2_9/>} />
+            <Route path='/Test_2_10' element={<TEST_2_10/>} />
           </Routes>
-          <div key="links">
+          <div key="links" style={{textAlign:"left", padding:"20px"}} >
               {jsxArray}
           </div>
       </div>
