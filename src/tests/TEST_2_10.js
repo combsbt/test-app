@@ -1,119 +1,94 @@
-import React from 'react';
+import { React, useRef, useEffect } from 'react';
 import './styles_3.css';
 
 export default function TEST_2_10() {
+
+  let activeCell = 1;
+  let grid = new Array(6).fill(undefined);
+  for (let i = 0; i < grid.length; i++) {
+    grid[i] = new Array(6).fill(undefined);
+  }
+  for (let i=0; i < 6; i++) {
+    for(let j=0; j < 6; j++)
+      grid[i][j]= j + 6*(i) +1
+  }
+  console.log(grid)
+  function useEventListener(eventName, handler, element = window){
+      // Create a ref that stores handler
+      const savedHandler = useRef();
+
+      // Update ref.current value if handler changes.
+      // This allows our effect below to always get latest handler ...
+      // ... without us needing to pass it in effect deps array ...
+      // ... and potentially cause effect to re-run every render.
+      useEffect(() => {
+        savedHandler.current = handler;
+      }, [handler]);
+
+      useEffect(
+        () => {
+          // Make sure element supports addEventListener
+          // On 
+          const isSupported = element && element.addEventListener;
+          if (!isSupported) return;
+
+          // Create event listener that calls handler function stored in ref
+          const eventListener = event => savedHandler.current(event);
+
+          // Add event listener
+          element.addEventListener(eventName, eventListener);
+
+          // Remove event listener on cleanup
+          return () => {
+            element.removeEventListener(eventName, eventListener);
+          };
+        },
+        [eventName, element] // Re-run if eventName or element changes
+      );
+    };
+
+    function handler({ key }) {
+      console.log(key)
+      if(key==="ArrowUp"){
+
+      }
+      else if(key==="ArrowRight"){
+        
+      }
+      else if(key==="ArrowLeft"){
+        
+      }
+      else if(key==="ArrowDown"){
+        
+      }
+    }
+
+    useEventListener('keydown', handler)
+
+  let jsxArray=[]
+  for(let i=1; i<37; i++){
+    if(i === activeCell){
+      jsxArray.push(
+      <div key={i} className="cell active" data-test={"cell-"+i}>
+        {i}
+      </div>
+      )
+    }
+    else{
+      jsxArray.push(
+      <div key={i} className="cell" data-test={"cell-"+i}>
+        {i}
+      </div>
+      ) 
+    }
+    
+  }
+
   return (
     <div>
       <h2>Grid navigation</h2>
       <div className="grid" >
-        <div className="cell active" data-test="cell-1">
-          1
-        </div>
-        <div className="cell" data-test="cell-2">
-          2
-        </div>
-        <div className="cell" data-test="cell-3">
-          3
-        </div>
-        <div className="cell" data-test="cell-4">
-          4
-        </div>
-        <div className="cell" data-test="cell-5">
-          5
-        </div>
-        <div className="cell" data-test="cell-6">
-          6
-        </div>
-        <div className="cell" data-test="cell-7">
-          7
-        </div>
-        <div className="cell" data-test="cell-8">
-          8
-        </div>
-        <div className="cell" data-test="cell-9">
-          9
-        </div>
-        <div className="cell" data-test="cell-10">
-          10
-        </div>
-        <div className="cell" data-test="cell-11">
-          11
-        </div>
-        <div className="cell" data-test="cell-12">
-          12
-        </div>
-        <div className="cell" data-test="cell-13">
-          13
-        </div>
-        <div className="cell" data-test="cell-14">
-          14
-        </div>
-        <div className="cell" data-test="cell-15">
-          15
-        </div>
-        <div className="cell" data-test="cell-16">
-          16
-        </div>
-        <div className="cell" data-test="cell-17">
-          17
-        </div>
-        <div className="cell" data-test="cell-18">
-          18
-        </div>
-        <div className="cell" data-test="cell-19">
-          19
-        </div>
-        <div className="cell" data-test="cell-20">
-          20
-        </div>
-        <div className="cell" data-test="cell-21">
-          21
-        </div>
-        <div className="cell" data-test="cell-22">
-          22
-        </div>
-        <div className="cell" data-test="cell-23">
-          23
-        </div>
-        <div className="cell" data-test="cell-24">
-          24
-        </div>
-        <div className="cell" data-test="cell-25">
-          25
-        </div>
-        <div className="cell" data-test="cell-26">
-          26
-        </div>
-        <div className="cell" data-test="cell-27">
-          27
-        </div>
-        <div className="cell" data-test="cell-28">
-          28
-        </div>
-        <div className="cell" data-test="cell-29">
-          29
-        </div>
-        <div className="cell" data-test="cell-30">
-          30
-        </div>
-        <div className="cell" data-test="cell-31">
-          31
-        </div>
-        <div className="cell" data-test="cell-32">
-          32
-        </div>
-        <div className="cell" data-test="cell-33">
-          33
-        </div>
-        <div className="cell" data-test="cell-34">
-          34
-        </div>
-        <div className="cell" data-test="cell-35">
-          35
-        </div>
-        <div className="cell" data-test="cell-36">
-          36
-        </div>
+        {jsxArray}
       </div>
     </div>
   );
