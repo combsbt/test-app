@@ -1,9 +1,9 @@
-import { React, useRef, useEffect } from 'react';
+import { React, useRef, useEffect, useState } from 'react';
 import './styles_3.css';
 
 export default function TEST_2_10() {
 
-  let activeCell = 1;
+  const [activeCell, setActiveCell] = useState([0,0]);
   let grid = new Array(6).fill(undefined);
   for (let i = 0; i < grid.length; i++) {
     grid[i] = new Array(6).fill(undefined);
@@ -12,6 +12,7 @@ export default function TEST_2_10() {
     for(let j=0; j < 6; j++)
       grid[i][j]= j + 6*(i) +1
   }
+  console.log(activeCell)
   console.log(grid)
   function useEventListener(eventName, handler, element = window){
       // Create a ref that stores handler
@@ -50,16 +51,24 @@ export default function TEST_2_10() {
     function handler({ key }) {
       console.log(key)
       if(key==="ArrowUp"){
-
-      }
-      else if(key==="ArrowRight"){
-        
+        if(activeCell[0] > 0){
+          setActiveCell([activeCell[0]-1, activeCell[1]])
+        }
       }
       else if(key==="ArrowLeft"){
-        
+        if(activeCell[1] > 0){
+          setActiveCell([activeCell[0], activeCell[1]-1])
+        } 
+      }
+      else if(key==="ArrowRight"){
+        if(activeCell[1] < 5){
+          setActiveCell([activeCell[0], activeCell[1]+1])
+        }
       }
       else if(key==="ArrowDown"){
-        
+        if(activeCell[0] < 5){
+          setActiveCell([activeCell[0]+1, activeCell[1]])
+        } 
       }
     }
 
@@ -67,7 +76,7 @@ export default function TEST_2_10() {
 
   let jsxArray=[]
   for(let i=1; i<37; i++){
-    if(i === activeCell){
+    if(i === grid[activeCell[0]][activeCell[1]]){
       jsxArray.push(
       <div key={i} className="cell active" data-test={"cell-"+i}>
         {i}
