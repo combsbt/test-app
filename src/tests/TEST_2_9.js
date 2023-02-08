@@ -4,7 +4,7 @@ import './styles_2.css';
 export default function TEST_2_9() {
 
   const ROWS = 7
-  const columnList = ["A","B","C"]
+  const COLUMNS = ["A","B","C"]
   const gridColumns = "150px "
   
   const [cells, setCells] = useState({})
@@ -14,8 +14,8 @@ export default function TEST_2_9() {
   useEffect(()=>{
     let initialCells = {}
     for(let i=0; i < ROWS; i++){
-      for(let j=0; j < columnList.length; j++){
-        initialCells[columnList[j]+(i+1)] = "";
+      for(let j=0; j < COLUMNS.length; j++){
+        initialCells[COLUMNS[j]+(i+1)] = "";
       }
     }
     setCells({...initialCells})
@@ -31,6 +31,48 @@ export default function TEST_2_9() {
     evaluateCells(reduceList)
 
   },[cells])
+
+  function replaceCellIDs(cellsCopy, reduceList){
+
+    Object.keys(cellsCopy).forEach(reduceID=>{
+      Object.keys(cellsCopy).forEach(cellID=>{    
+        if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
+          if(cellID===reduceID){
+            reduceList = {...reduceList, [reduceID]:"#ERR"}
+          }
+          else if(reduceList[cellID].substring(0,1)==="="){
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
+             reduceList[cellID].substring(1)===""?"#ERR":"("+reduceList[cellID].substring(1)+")")}  
+          }
+          else{
+            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
+             reduceList[cellID]===""?"#ERR":"("+reduceList[cellID]+")")}
+          }
+          
+        }
+      }) 
+    })
+
+    let more = isMore(cellsCopy, reduceList)
+    if(more){
+      reduceList = replaceCellIDs(cellsCopy, reduceList)
+    }
+    
+    return(reduceList)
+  }
+
+  function isMore(cellsCopy, reduceList){
+      let list = []
+      Object.keys(cellsCopy).forEach(cellID=>{
+      Object.keys(cellsCopy).forEach(reduceID=>{
+          if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
+            list.push(true)
+          }
+        })
+      })
+      list.push(false)
+      return list.includes(true)
+    }
 
   function evaluateCells(reduceList){
     if(Object.keys(reduceList).length){
@@ -69,49 +111,6 @@ export default function TEST_2_9() {
     setCellValues({...reduceList})
   }
 
-  function replaceCellIDs(cellsCopy, reduceList){
-
-    Object.keys(cellsCopy).forEach(reduceID=>{
-      Object.keys(cellsCopy).forEach(cellID=>{    
-        if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
-          if(cellID==reduceID){
-            reduceList = {...reduceList, [reduceID]:"#ERR"}
-          }
-          else if(reduceList[cellID].substring(0,1)==="="){
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
-             reduceList[cellID].substring(1)===""?"#ERR":"("+reduceList[cellID].substring(1)+")")}  
-          }
-          else{
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
-             reduceList[cellID]===""?"#ERR":"("+reduceList[cellID]+")")}
-          }
-          
-        }
-      }) 
-    })
-
-    let more = isMore(cellsCopy, reduceList)
-    if(more){
-      reduceList = replaceCellIDs(cellsCopy, reduceList)
-    }
-    
-    return(reduceList)
-  }
-
-  function isMore(cellsCopy, reduceList){
-      let list = []
-      Object.keys(cellsCopy).forEach(cellID=>{
-      Object.keys(cellsCopy).forEach(reduceID=>{
-          if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
-            list.push(true)
-          }
-        })
-      })
-      list.push(false)
-      return list.includes(true)
-    }
-
-
   function handleCalc(id, value){
     document.getElementById(id).hidden=true;
     let newCells = {...cells}
@@ -121,21 +120,21 @@ export default function TEST_2_9() {
   }
   
   let jsxArray = []
-  for(let i=0; i < columnList.length; i++){
-    jsxArray.push(<div key={columnList[i]} className="cell2 header">{columnList[i]}</div>)
+  for(let i=0; i < COLUMNS.length; i++){
+    jsxArray.push(<div key={COLUMNS[i]} className="cell2 header">{COLUMNS[i]}</div>)
   }  
   let jsxArray2 = []
   for(let i=0; i < ROWS; i++){
     jsxArray2.push(<div key={"header"+(i+1)} className="cell2 header">{i+1}</div>)
-    for(let j=0; j < columnList.length; j++){
-      let display = cellValues[columnList[j]+(i+1)]
+    for(let j=0; j < COLUMNS.length; j++){
+      let display = cellValues[COLUMNS[j]+(i+1)]
       jsxArray2.push(   
-        <div key={"key"+columnList[j]+(i+1)} className="cell2" data-test={columnList[j]+(i+1)} 
+        <div key={"key"+COLUMNS[j]+(i+1)} className="cell2" data-test={COLUMNS[j]+(i+1)} 
         onClick={()=>{
-          document.getElementById(columnList[j]+(i+1)).hidden=false;
-          document.getElementById(columnList[j]+(i+1)).focus();
+          document.getElementById(COLUMNS[j]+(i+1)).hidden=false;
+          document.getElementById(COLUMNS[j]+(i+1)).focus();
         }}  >
-          <input hidden={true} id={columnList[j]+(i+1)} type="text"  
+          <input hidden={true} id={COLUMNS[j]+(i+1)} type="text"  
           onKeyDown={(e)=>e.key==="Enter"&&handleCalc(e.target.id,e.target.value)}
           onBlur={(e)=>handleCalc(e.target.id,e.target.value)}/>
           {display}
@@ -147,7 +146,7 @@ export default function TEST_2_9() {
   return (
     <div style={{textAlign:"left", padding:"20px"}}>
       <h2>Calculation Sheet</h2>
-      <div className="grid2" style={{gridTemplateColumns: "30px "+gridColumns.repeat(columnList.length)}}>
+      <div className="grid2" style={{gridTemplateColumns: "30px "+gridColumns.repeat(COLUMNS.length)}}>
         <div className="cell2"></div>
         {jsxArray}
         {jsxArray2}
