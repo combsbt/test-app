@@ -13,7 +13,6 @@ export default function TEST_2_10() {
       grid[i][j]= j + 6*(i) +1
   }
   console.log(activeCell)
-  console.log(grid)
   function useEventListener(eventName, handler, element = window){
       // Create a ref that stores handler
       const savedHandler = useRef();

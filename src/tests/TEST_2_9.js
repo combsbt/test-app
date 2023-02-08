@@ -42,6 +42,7 @@ export default function TEST_2_9() {
   
   //create the JSX based on the numbers of ROWS and COLUMNS
   //each cell has an input with id corresponding to location ("A1","B2",...)
+  //each cell displays the corresponding value in cellValues
   let jsxArray = []
   for(let i=0; i < COLUMNS.length; i++){
     jsxArray.push(<div key={COLUMNS[i]} className="cell2 header">{COLUMNS[i]}</div>)
@@ -87,6 +88,7 @@ function replaceCellIDs(replacedCells){
         if(cellID===replaceID){
           replacedCells = {...replacedCells, [replaceID]:"#ERR"}
         }
+        //replace references to other cells with referenced cell's content
         else if(replacedCells[cellID].substring(0,1)==="="){
           replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].replace(cellID,
            replacedCells[cellID].substring(1)===""?"#ERR":"("+replacedCells[cellID].substring(1)+")")}  
