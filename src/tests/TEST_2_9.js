@@ -20,21 +20,20 @@ export default function TEST_2_9() {
     }
     setCells({...initialCells})
     setCellValues({...initialCells})
-  },[COLUMNS])
+  },[ROWS, COLUMNS])
 
   //when cells change, update values
   useEffect(()=>{
-    let cellsCopy = {...cells}
     let replacedCells = {...cells}
     // take a copy of cells and replace all references with expressions
-    replacedCells = replaceCellIDs(cellsCopy, replacedCells)
+    replacedCells = replaceCellIDs(replacedCells)
     // evaluate the expressions
     let evaluatedCells = evaluateCells(replacedCells)
     setCellValues({...evaluatedCells})
   },[cells])
 
-  //calculate cells when keyDown="Enter" or a focused cell is blurred
-  function handleCalc(id, value){
+  //update cell when keyDown="Enter" or a focused cell is blurred
+  function handleCellUpdate(id, value){
     document.getElementById(id).hidden=true;
     let newCells = {...cells}
     newCells[id] = value
@@ -42,7 +41,7 @@ export default function TEST_2_9() {
   }
   
   //create the JSX based on the numbers of ROWS and COLUMNS
-  //each div has an input with id corresponding to location ("A1","B2",...)
+  //each cell has an input with id corresponding to location ("A1","B2",...)
   let jsxArray = []
   for(let i=0; i < COLUMNS.length; i++){
     jsxArray.push(<div key={COLUMNS[i]} className="cell2 header">{COLUMNS[i]}</div>)
@@ -59,8 +58,8 @@ export default function TEST_2_9() {
           document.getElementById(COLUMNS[j]+(i+1)).focus();
         }}  >
           <input hidden={true} id={COLUMNS[j]+(i+1)} type="text"  
-          onKeyDown={(e)=>e.key==="Enter"&&handleCalc(e.target.id,e.target.value)}
-          onBlur={(e)=>handleCalc(e.target.id,e.target.value)}/>
+          onKeyDown={(e)=>e.key==="Enter"&&handleCellUpdate(e.target.id,e.target.value)}
+          onBlur={(e)=>handleCellUpdate(e.target.id,e.target.value)}/>
           {display}
         </div>
       )
@@ -79,20 +78,21 @@ export default function TEST_2_9() {
   );
 }
 
-function replaceCellIDs(cellsCopy, replacedCells){
+function replaceCellIDs(replacedCells){
 
-  Object.keys(cellsCopy).forEach(reduceID=>{
-    Object.keys(cellsCopy).forEach(cellID=>{    
-      if(replacedCells[reduceID] && replacedCells[reduceID].includes(cellID)){
-        if(cellID===reduceID){
-          replacedCells = {...replacedCells, [reduceID]:"#ERR"}
+  Object.keys(replacedCells).forEach(replaceID=>{
+    Object.keys(replacedCells).forEach(cellID=>{    
+      if(replacedCells[replaceID] && replacedCells[replaceID].includes(cellID)){
+        //prevent infinite loop if cell is self-referential
+        if(cellID===replaceID){
+          replacedCells = {...replacedCells, [replaceID]:"#ERR"}
         }
         else if(replacedCells[cellID].substring(0,1)==="="){
-          replacedCells = {...replacedCells, [reduceID]:replacedCells[reduceID].replace(cellID,
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].replace(cellID,
            replacedCells[cellID].substring(1)===""?"#ERR":"("+replacedCells[cellID].substring(1)+")")}  
         }
         else{
-          replacedCells = {...replacedCells, [reduceID]:replacedCells[reduceID].replace(cellID,
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].replace(cellID,
            replacedCells[cellID]===""?"#ERR":"("+replacedCells[cellID]+")")}
         }
         
@@ -100,22 +100,22 @@ function replaceCellIDs(cellsCopy, replacedCells){
     }) 
   })
 
-  let more = isMore(cellsCopy, replacedCells)
-  if(more){
-    replacedCells = replaceCellIDs(cellsCopy, replacedCells)
+  // if cells still have references, run the function again
+  if(doesContainRefs(replacedCells)){
+    replacedCells = replaceCellIDs(replacedCells)
   }
   
   return(replacedCells)
 }
 
-function isMore(cellsCopy, replacedCells){
+function doesContainRefs(replacedCells){
     let list = []
-    Object.keys(cellsCopy).forEach(cellID=>{
-    Object.keys(cellsCopy).forEach(reduceID=>{
-        if(replacedCells[cellID] !== undefined && replacedCells[cellID].includes(reduceID)){
-          list.push(true)
-        }
-      })
+    Object.keys(replacedCells).forEach(cellID=>{
+      Object.keys(replacedCells).forEach(replaceID=>{
+          if(replacedCells[cellID] !== undefined && replacedCells[cellID].includes(replaceID)){
+            list.push(true)
+          }
+        })
     })
     list.push(false)
     return list.includes(true)
