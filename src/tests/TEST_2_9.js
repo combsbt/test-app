@@ -1,10 +1,10 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState, useEffect, useMemo } from 'react';
 import './styles_2.css';
 
 export default function TEST_2_9() {
 
   const ROWS = 7
-  const COLUMNS = ["A","B","C"]
+  const COLUMNS = useMemo(() =>["A","B","C"],[])
   const gridColumns = "150px "
   
   const [cells, setCells] = useState({})
@@ -20,105 +20,29 @@ export default function TEST_2_9() {
     }
     setCells({...initialCells})
     setCellValues({...initialCells})
-  },[])
+  },[COLUMNS])
 
   //when cells change, update values
   useEffect(()=>{
     let cellsCopy = {...cells}
-    let reduceList = {...cellsCopy}
-
-    reduceList = replaceCellIDs(cellsCopy, reduceList)
-    evaluateCells(reduceList)
-
+    let replacedCells = {...cells}
+    // take a copy of cells and replace all references with expressions
+    replacedCells = replaceCellIDs(cellsCopy, replacedCells)
+    // evaluate the expressions
+    let evaluatedCells = evaluateCells(replacedCells)
+    setCellValues({...evaluatedCells})
   },[cells])
 
-  function replaceCellIDs(cellsCopy, reduceList){
-
-    Object.keys(cellsCopy).forEach(reduceID=>{
-      Object.keys(cellsCopy).forEach(cellID=>{    
-        if(reduceList[reduceID] && reduceList[reduceID].includes(cellID)){
-          if(cellID===reduceID){
-            reduceList = {...reduceList, [reduceID]:"#ERR"}
-          }
-          else if(reduceList[cellID].substring(0,1)==="="){
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
-             reduceList[cellID].substring(1)===""?"#ERR":"("+reduceList[cellID].substring(1)+")")}  
-          }
-          else{
-            reduceList = {...reduceList, [reduceID]:reduceList[reduceID].replace(cellID,
-             reduceList[cellID]===""?"#ERR":"("+reduceList[cellID]+")")}
-          }
-          
-        }
-      }) 
-    })
-
-    let more = isMore(cellsCopy, reduceList)
-    if(more){
-      reduceList = replaceCellIDs(cellsCopy, reduceList)
-    }
-    
-    return(reduceList)
-  }
-
-  function isMore(cellsCopy, reduceList){
-      let list = []
-      Object.keys(cellsCopy).forEach(cellID=>{
-      Object.keys(cellsCopy).forEach(reduceID=>{
-          if(reduceList[cellID] !== undefined && reduceList[cellID].includes(reduceID)){
-            list.push(true)
-          }
-        })
-      })
-      list.push(false)
-      return list.includes(true)
-    }
-
-  function evaluateCells(reduceList){
-    if(Object.keys(reduceList).length){
-      Object.keys(reduceList).forEach(cellID=>{
-        if(reduceList[cellID].includes("#ERR") || reduceList[cellID].includes("//")){
-          reduceList = {...reduceList, [cellID]:"#ERR"}
-        }
-
-        if(reduceList[cellID].substring(0,1)==="="){
-          let result = "#ERR"
-          try{
-            result = isNaN(eval(reduceList[cellID].substring(1)))?"#ERR":eval(reduceList[cellID].substring(1))
-          }
-          catch{
-            result = "#ERR"
-          }
-          reduceList = {...reduceList, [cellID]:result}
-        }
-        else if(reduceList[cellID].substring(0,1)!=="=" && reduceList[cellID]!==""){
-          let result = "#ERR"
-          try{
-            result = isNaN(parseInt(reduceList[cellID]))?reduceList[cellID]:parseInt(reduceList[cellID])
-          }
-          catch{
-            result = "#ERR"
-          }
-          reduceList = {...reduceList, [cellID]:result}
-        }
-
-        if(reduceList[cellID].toString().includes("Infinity")){
-          reduceList = {...reduceList, [cellID]:"#ERR"} 
-        }
-
-      })  
-    }
-    setCellValues({...reduceList})
-  }
-
+  //calculate cells when keyDown="Enter" or a focused cell is blurred
   function handleCalc(id, value){
     document.getElementById(id).hidden=true;
     let newCells = {...cells}
     newCells[id] = value
     setCells({...newCells})
-    setCellValues({...newCells})
   }
   
+  //create the JSX based on the numbers of ROWS and COLUMNS
+  //each div has an input with id corresponding to location ("A1","B2",...)
   let jsxArray = []
   for(let i=0; i < COLUMNS.length; i++){
     jsxArray.push(<div key={COLUMNS[i]} className="cell2 header">{COLUMNS[i]}</div>)
@@ -154,3 +78,82 @@ export default function TEST_2_9() {
     </div>
   );
 }
+
+function replaceCellIDs(cellsCopy, replacedCells){
+
+  Object.keys(cellsCopy).forEach(reduceID=>{
+    Object.keys(cellsCopy).forEach(cellID=>{    
+      if(replacedCells[reduceID] && replacedCells[reduceID].includes(cellID)){
+        if(cellID===reduceID){
+          replacedCells = {...replacedCells, [reduceID]:"#ERR"}
+        }
+        else if(replacedCells[cellID].substring(0,1)==="="){
+          replacedCells = {...replacedCells, [reduceID]:replacedCells[reduceID].replace(cellID,
+           replacedCells[cellID].substring(1)===""?"#ERR":"("+replacedCells[cellID].substring(1)+")")}  
+        }
+        else{
+          replacedCells = {...replacedCells, [reduceID]:replacedCells[reduceID].replace(cellID,
+           replacedCells[cellID]===""?"#ERR":"("+replacedCells[cellID]+")")}
+        }
+        
+      }
+    }) 
+  })
+
+  let more = isMore(cellsCopy, replacedCells)
+  if(more){
+    replacedCells = replaceCellIDs(cellsCopy, replacedCells)
+  }
+  
+  return(replacedCells)
+}
+
+function isMore(cellsCopy, replacedCells){
+    let list = []
+    Object.keys(cellsCopy).forEach(cellID=>{
+    Object.keys(cellsCopy).forEach(reduceID=>{
+        if(replacedCells[cellID] !== undefined && replacedCells[cellID].includes(reduceID)){
+          list.push(true)
+        }
+      })
+    })
+    list.push(false)
+    return list.includes(true)
+  }
+
+function evaluateCells(replacedCells){
+    if(Object.keys(replacedCells).length){
+      Object.keys(replacedCells).forEach(cellID=>{
+        if(replacedCells[cellID].includes("#ERR") || replacedCells[cellID].includes("//")){
+          replacedCells = {...replacedCells, [cellID]:"#ERR"}
+        }
+
+        if(replacedCells[cellID].substring(0,1)==="="){
+          let result = "#ERR"
+          try{
+            result = isNaN(eval(replacedCells[cellID].substring(1)))?"#ERR":eval(replacedCells[cellID].substring(1))
+          }
+          catch{
+            result = "#ERR"
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
+        else if(replacedCells[cellID].substring(0,1)!=="=" && replacedCells[cellID]!==""){
+          let result = "#ERR"
+          try{
+            result = isNaN(parseInt(replacedCells[cellID]))?replacedCells[cellID]:parseInt(replacedCells[cellID])
+          }
+          catch{
+            result = "#ERR"
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
+
+        if(replacedCells[cellID].toString().includes("Infinity")){
+          replacedCells = {...replacedCells, [cellID]:"#ERR"} 
+        }
+
+      })  
+    }
+    return replacedCells
+  }
