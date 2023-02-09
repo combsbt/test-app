@@ -10,7 +10,8 @@ export default function TEST_2_9() {
   const [cells, setCells] = useState({})
   const [cellValues, setCellValues] = useState({})
 
-  //set initial cell values
+  //set cells and cellValues as objects with keys corresponding to cell locations ("A1", "B2", ...)
+  //inital values are all ""
   useEffect(()=>{
     let initialCells = {}
     for(let i=0; i < ROWS; i++){
@@ -32,7 +33,8 @@ export default function TEST_2_9() {
     setCellValues({...evaluatedCells})
   },[cells])
 
-  //update cell when keyDown="Enter" or a focused cell is blurred
+  //update cells object when keyDown="Enter" or a focused cell is blurred
+  //set cell value to content of input cell with matching id
   function handleCellUpdate(id, value){
     document.getElementById(id).hidden=true;
     let newCells = {...cells}
@@ -41,7 +43,7 @@ export default function TEST_2_9() {
   }
   
   //create the JSX based on the numbers of ROWS and COLUMNS
-  //each cell has an input with id corresponding to location ("A1","B2",...)
+  //each cell has an input with id corresponding to location ("A1","B2", ...)
   //each cell displays the corresponding value in cellValues
   let jsxArray = []
   for(let i=0; i < COLUMNS.length; i++){
