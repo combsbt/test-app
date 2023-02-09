@@ -23,7 +23,7 @@ export default function TEST_2_9() {
     setCellValues({...initialCells})
   },[ROWS, COLUMNS])
 
-  //when cells change, update values
+  //when cells object changes, update values
   useEffect(()=>{
     let replacedCells = {...cells}
     // take a copy of cells and replace all references with expressions
