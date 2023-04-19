@@ -1,70 +1,165 @@
-# Getting Started with Create React App
+```jsx
+import { React, useState, useEffect, useMemo } from 'react';
+import './styles_2.css';
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+export default function TEST_2_9() {
 
-## Available Scripts
+  const ROWS = 7
+  const COLUMNS = useMemo(() =>["A","B","C"],[])
+  const gridColumns = "150px "
+  
+  const [cells, setCells] = useState({})
+  const [cellValues, setCellValues] = useState({})
 
-In the project directory, you can run:
+  //set cells and cellValues as objects with keys corresponding to cell locations ("A1", "B2", ...)
+  //inital values are all ""
+  useEffect(()=>{
+    let initialCells = {}
+    for(let i=0; i < ROWS; i++){
+      for(let j=0; j < COLUMNS.length; j++){
+        initialCells[COLUMNS[j]+(i+1)] = "";
+      }
+    }
+    setCells({...initialCells})
+    setCellValues({...initialCells})
+  },[ROWS, COLUMNS])
 
-### `npm start`
+  //when cells object changes, update values
+  useEffect(()=>{
+    let replacedCells = {...cells}
+    // take a copy of cells and replace all references with expressions
+    replacedCells = replaceCellIDs(replacedCells)
+    // evaluate the expressions
+    let evaluatedCells = evaluateCells(replacedCells)
+    setCellValues({...evaluatedCells})
+  },[cells])
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  //update cells object when keyDown="Enter" or a focused cell is blurred
+  //set cell value to content of input cell with matching id
+  function handleCellUpdate(id, value){
+    document.getElementById(id).hidden=true;
+    let newCells = {...cells}
+    newCells[id] = value
+    setCells({...newCells})
+  }
+  
+  //create the JSX based on the numbers of ROWS and COLUMNS
+  //each cell has an input with id corresponding to location ("A1","B2", ...)
+  //each cell displays the corresponding value in cellValues
+  let jsxArray = []
+  for(let i=0; i < COLUMNS.length; i++){
+    jsxArray.push(<div key={COLUMNS[i]} className="cell2 header">{COLUMNS[i]}</div>)
+  }  
+  let jsxArray2 = []
+  for(let i=0; i < ROWS; i++){
+    jsxArray2.push(<div key={"header"+(i+1)} className="cell2 header">{i+1}</div>)
+    for(let j=0; j < COLUMNS.length; j++){
+      let display = cellValues[COLUMNS[j]+(i+1)]
+      jsxArray2.push(   
+        <div key={"key"+COLUMNS[j]+(i+1)} className="cell2" data-test={COLUMNS[j]+(i+1)} 
+        onClick={()=>{
+          document.getElementById(COLUMNS[j]+(i+1)).hidden=false;
+          document.getElementById(COLUMNS[j]+(i+1)).focus();
+        }}  >
+          <input hidden={true} id={COLUMNS[j]+(i+1)} type="text"  
+          onKeyDown={(e)=>e.key==="Enter"&&handleCellUpdate(e.target.id,e.target.value)}
+          onBlur={(e)=>handleCellUpdate(e.target.id,e.target.value)}/>
+          {display}
+        </div>
+      )
+    }
+  }
+  
+  return (
+    <div style={{textAlign:"left", padding:"20px"}}>
+      <h2>Calculation Sheet</h2>
+      <div className="grid2" style={{gridTemplateColumns: "30px "+gridColumns.repeat(COLUMNS.length)}}>
+        <div className="cell2"></div>
+        {jsxArray}
+        {jsxArray2}
+      </div>
+    </div>
+  );
+}
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+function replaceCellIDs(replacedCells){
 
-### `npm test`
+  Object.keys(replacedCells).forEach(replaceID=>{
+    Object.keys(replacedCells).forEach(cellID=>{    
+      if(replacedCells[replaceID] && replacedCells[replaceID].includes(cellID)){
+        //prevent infinite loop if cell is self-referential
+        if(cellID===replaceID){
+          replacedCells = {...replacedCells, [replaceID]:"#ERR"}
+        }
+        //replace references to other cells with referenced cell's content
+        else if(replacedCells[cellID].substring(0,1)==="="){
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].replace(cellID,
+           replacedCells[cellID].substring(1)===""?"#ERR":"("+replacedCells[cellID].substring(1)+")")}  
+        }
+        else{
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].replace(cellID,
+           replacedCells[cellID]===""?"#ERR":"("+replacedCells[cellID]+")")}
+        }
+        
+      }
+    }) 
+  })
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  // if cells still have references, run the function again
+  if(doesContainRefs(replacedCells)){
+    replacedCells = replaceCellIDs(replacedCells)
+  }
+  
+  return(replacedCells)
+}
 
-### `npm run build`
+function doesContainRefs(replacedCells){
+    let list = []
+    Object.keys(replacedCells).forEach(cellID=>{
+      Object.keys(replacedCells).forEach(replaceID=>{
+          if(replacedCells[cellID] !== undefined && replacedCells[cellID].includes(replaceID)){
+            list.push(true)
+          }
+        })
+    })
+    list.push(false)
+    return list.includes(true)
+  }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+function evaluateCells(replacedCells){
+    if(Object.keys(replacedCells).length){
+      Object.keys(replacedCells).forEach(cellID=>{
+        if(replacedCells[cellID].includes("#ERR") || replacedCells[cellID].includes("//")){
+          replacedCells = {...replacedCells, [cellID]:"#ERR"}
+        }
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+        if(replacedCells[cellID].substring(0,1)==="="){
+          let result = "#ERR"
+          try{
+            result = isNaN(eval(replacedCells[cellID].substring(1)))?"#ERR":eval(replacedCells[cellID].substring(1))
+          }
+          catch{
+            result = "#ERR"
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
+        else if(replacedCells[cellID].substring(0,1)!=="=" && replacedCells[cellID]!==""){
+          let result = "#ERR"
+          try{
+            result = isNaN(parseInt(replacedCells[cellID]))?replacedCells[cellID]:parseInt(replacedCells[cellID])
+          }
+          catch{
+            result = "#ERR"
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+        if(replacedCells[cellID].toString().includes("Infinity")){
+          replacedCells = {...replacedCells, [cellID]:"#ERR"} 
+        }
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+      })  
+    }
+    return replacedCells
+  }
+```
