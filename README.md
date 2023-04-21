@@ -1,8 +1,9 @@
- This repo has practice react problems that used to be hosted on practice.dev (which seems to no longer exist).
+ # Practice Problems
+ This repo has practice problems for react developers that used to be hosted on practice.dev (which seems to no longer exist).
  <br/>
  Below is an example of a problem with my solution.
  
- 
+ ## Problem
  <div>
   Your task is to implement a minimal calculation sheet that supports basic
   math operations and allows you to create formulas that reference other
@@ -95,7 +96,7 @@
 </div>
 <br/>
 
-
+## My Solution
 ```jsx
 import { React, useState, useEffect, useMemo } from 'react';
 import './styles_2.css';
