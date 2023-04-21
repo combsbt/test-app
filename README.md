@@ -97,6 +97,7 @@
 <br/>
 
 ## My Solution
+I have made this solution more extensible than was required above.  Any number of rows and columns can be used by setting the ROWS and COLUMNS variables as needed.  It is set to the required 7 rows and 3 columns for this example.
 ```jsx
 import { React, useState, useEffect, useMemo } from 'react';
 import './styles_2.css';
