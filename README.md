@@ -1,5 +1,6 @@
- This repo has practice react problems that used to be hosted on practice.dev
- Here is an example of a problem with my solution.
+ This repo has practice react problems that used to be hosted on practice.dev (which seems to no longer exist).
+ <br/>
+ Below is an example of a problem with my solution.
  
  
  <div>
