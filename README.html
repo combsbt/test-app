@@ -1,0 +1,399 @@
+
+      <html>
+        <head>
+          <title></title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta charset="UTF-8">
+        </head>
+        <body>
+          <div id='content'>
+      <pre><code class="hljs jsx language-jsx"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">React</span>, useState, useEffect, useMemo } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./styles_2.css&#x27;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">TEST_2_9</span>(<span class="hljs-params"></span>) {
+
+  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">ROWS</span> = <span class="hljs-number">7</span>
+  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">COLUMNS</span> = <span class="hljs-title function_">useMemo</span>(<span class="hljs-function">() =&gt;</span>[<span class="hljs-string">&quot;A&quot;</span>,<span class="hljs-string">&quot;B&quot;</span>,<span class="hljs-string">&quot;C&quot;</span>],[])
+  <span class="hljs-keyword">const</span> gridColumns = <span class="hljs-string">&quot;150px &quot;</span>
+
+  <span class="hljs-keyword">const</span> [cells, setCells] = <span class="hljs-title function_">useState</span>({})
+  <span class="hljs-keyword">const</span> [cellValues, setCellValues] = <span class="hljs-title function_">useState</span>({})
+
+  <span class="hljs-comment">//set cells and cellValues as objects with keys corresponding to cell locations (&quot;A1&quot;, &quot;B2&quot;, ...)</span>
+  <span class="hljs-comment">//inital values are all &quot;&quot;</span>
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">()=&gt;</span>{
+    <span class="hljs-keyword">let</span> initialCells = {}
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i &lt; <span class="hljs-variable constant_">ROWS</span>; i++){
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> j=<span class="hljs-number">0</span>; j &lt; <span class="hljs-variable constant_">COLUMNS</span>.<span class="hljs-property">length</span>; j++){
+        initialCells[<span class="hljs-variable constant_">COLUMNS</span>[j]+(i+<span class="hljs-number">1</span>)] = <span class="hljs-string">&quot;&quot;</span>;
+      }
+    }
+    <span class="hljs-title function_">setCells</span>({...initialCells})
+    <span class="hljs-title function_">setCellValues</span>({...initialCells})
+  },[<span class="hljs-variable constant_">ROWS</span>, <span class="hljs-variable constant_">COLUMNS</span>])
+
+  <span class="hljs-comment">//when cells object changes, update values</span>
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">()=&gt;</span>{
+    <span class="hljs-keyword">let</span> replacedCells = {...cells}
+    <span class="hljs-comment">// take a copy of cells and replace all references with expressions</span>
+    replacedCells = <span class="hljs-title function_">replaceCellIDs</span>(replacedCells)
+    <span class="hljs-comment">// evaluate the expressions</span>
+    <span class="hljs-keyword">let</span> evaluatedCells = evaluateCells(replacedCells)
+    <span class="hljs-title function_">setCellValues</span>({...evaluatedCells})
+  },[cells])
+
+  <span class="hljs-comment">//update cells object when keyDown=&quot;Enter&quot; or a focused cell is blurred</span>
+  <span class="hljs-comment">//set cell value to content of input cell with matching id</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">handleCellUpdate</span>(<span class="hljs-params">id, value</span>){
+    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(id).<span class="hljs-property">hidden</span>=<span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">let</span> newCells = {...cells}
+    newCells[id] = value
+    <span class="hljs-title function_">setCells</span>({...newCells})
+  }
+
+  <span class="hljs-comment">//create the JSX based on the numbers of ROWS and COLUMNS</span>
+  <span class="hljs-comment">//each cell has an input with id corresponding to location (&quot;A1&quot;,&quot;B2&quot;, ...)</span>
+  <span class="hljs-comment">//each cell displays the corresponding value in cellValues</span>
+  <span class="hljs-keyword">let</span> jsxArray = []
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i &lt; <span class="hljs-variable constant_">COLUMNS</span>.<span class="hljs-property">length</span>; i++){
+    jsxArray.<span class="hljs-title function_">push</span>(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{COLUMNS[i]}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;cell2 header&quot;</span>&gt;</span>{COLUMNS[i]}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>)
+  }  
+  <span class="hljs-keyword">let</span> jsxArray2 = []
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i &lt; <span class="hljs-variable constant_">ROWS</span>; i++){
+    jsxArray2.<span class="hljs-title function_">push</span>(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{</span>&quot;<span class="hljs-attr">header</span>&quot;+(<span class="hljs-attr">i</span>+<span class="hljs-attr">1</span>)} <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;cell2 header&quot;</span>&gt;</span>{i+1}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>)
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> j=<span class="hljs-number">0</span>; j &lt; <span class="hljs-variable constant_">COLUMNS</span>.<span class="hljs-property">length</span>; j++){
+      <span class="hljs-keyword">let</span> display = cellValues[<span class="hljs-variable constant_">COLUMNS</span>[j]+(i+<span class="hljs-number">1</span>)]
+      jsxArray2.<span class="hljs-title function_">push</span>(   
+        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{</span>&quot;<span class="hljs-attr">key</span>&quot;+<span class="hljs-attr">COLUMNS</span>[<span class="hljs-attr">j</span>]+(<span class="hljs-attr">i</span>+<span class="hljs-attr">1</span>)} <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;cell2&quot;</span> <span class="hljs-attr">data-test</span>=<span class="hljs-string">{COLUMNS[j]+(i+1)}</span> 
+        <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span>=&gt;</span>{
+          document.getElementById(COLUMNS[j]+(i+1)).hidden=false;
+          document.getElementById(COLUMNS[j]+(i+1)).focus();
+        }}  &gt;
+          <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">hidden</span>=<span class="hljs-string">{true}</span> <span class="hljs-attr">id</span>=<span class="hljs-string">{COLUMNS[j]+(i+1)}</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span>  
+          <span class="hljs-attr">onKeyDown</span>=<span class="hljs-string">{(e)</span>=&gt;</span>e.key===&quot;Enter&quot;&amp;&amp;handleCellUpdate(e.target.id,e.target.value)}
+          onBlur={(e)=&gt;handleCellUpdate(e.target.id,e.target.value)}/&gt;
+          {display}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+      )
+    }
+  }
+
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{textAlign:</span>&quot;<span class="hljs-attr">left</span>&quot;, <span class="hljs-attr">padding:</span>&quot;<span class="hljs-attr">20px</span>&quot;}}&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Calculation Sheet<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;grid2&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{gridTemplateColumns:</span> &quot;<span class="hljs-attr">30px</span> &quot;+<span class="hljs-attr">gridColumns.repeat</span>(<span class="hljs-attr">COLUMNS.length</span>)}}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;cell2&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        {jsxArray}
+        {jsxArray2}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  );
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">replaceCellIDs</span>(<span class="hljs-params">replacedCells</span>){
+
+  <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">replaceID</span>=&gt;</span>{
+    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">cellID</span>=&gt;</span>{    
+      <span class="hljs-keyword">if</span>(replacedCells[replaceID] &amp;&amp; replacedCells[replaceID].<span class="hljs-title function_">includes</span>(cellID)){
+        <span class="hljs-comment">//prevent infinite loop if cell is self-referential</span>
+        <span class="hljs-keyword">if</span>(cellID===replaceID){
+          replacedCells = {...replacedCells, [replaceID]:<span class="hljs-string">&quot;#ERR&quot;</span>}
+        }
+        <span class="hljs-comment">//replace references to other cells with referenced cell&#x27;s content</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>)===<span class="hljs-string">&quot;=&quot;</span>){
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].<span class="hljs-title function_">replace</span>(cellID,
+           replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">1</span>)===<span class="hljs-string">&quot;&quot;</span>?<span class="hljs-string">&quot;#ERR&quot;</span>:<span class="hljs-string">&quot;(&quot;</span>+replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">1</span>)+<span class="hljs-string">&quot;)&quot;</span>)}  
+        }
+        <span class="hljs-keyword">else</span>{
+          replacedCells = {...replacedCells, [replaceID]:replacedCells[replaceID].<span class="hljs-title function_">replace</span>(cellID,
+           replacedCells[cellID]===<span class="hljs-string">&quot;&quot;</span>?<span class="hljs-string">&quot;#ERR&quot;</span>:<span class="hljs-string">&quot;(&quot;</span>+replacedCells[cellID]+<span class="hljs-string">&quot;)&quot;</span>)}
+        }
+
+      }
+    }) 
+  })
+
+  <span class="hljs-comment">// if cells still have references, run the function again</span>
+  <span class="hljs-keyword">if</span>(<span class="hljs-title function_">doesContainRefs</span>(replacedCells)){
+    replacedCells = <span class="hljs-title function_">replaceCellIDs</span>(replacedCells)
+  }
+
+  <span class="hljs-keyword">return</span>(replacedCells)
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">doesContainRefs</span>(<span class="hljs-params">replacedCells</span>){
+    <span class="hljs-keyword">let</span> list = []
+    <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">cellID</span>=&gt;</span>{
+      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">replaceID</span>=&gt;</span>{
+          <span class="hljs-keyword">if</span>(replacedCells[cellID] !== <span class="hljs-literal">undefined</span> &amp;&amp; replacedCells[cellID].<span class="hljs-title function_">includes</span>(replaceID)){
+            list.<span class="hljs-title function_">push</span>(<span class="hljs-literal">true</span>)
+          }
+        })
+    })
+    list.<span class="hljs-title function_">push</span>(<span class="hljs-literal">false</span>)
+    <span class="hljs-keyword">return</span> list.<span class="hljs-title function_">includes</span>(<span class="hljs-literal">true</span>)
+  }
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">evaluateCells</span>(<span class="hljs-params">replacedCells</span>){
+    <span class="hljs-keyword">if</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-property">length</span>){
+      <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(replacedCells).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">cellID</span>=&gt;</span>{
+        <span class="hljs-keyword">if</span>(replacedCells[cellID].<span class="hljs-title function_">includes</span>(<span class="hljs-string">&quot;#ERR&quot;</span>) || replacedCells[cellID].<span class="hljs-title function_">includes</span>(<span class="hljs-string">&quot;//&quot;</span>)){
+          replacedCells = {...replacedCells, [cellID]:<span class="hljs-string">&quot;#ERR&quot;</span>}
+        }
+
+        <span class="hljs-keyword">if</span>(replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>)===<span class="hljs-string">&quot;=&quot;</span>){
+          <span class="hljs-keyword">let</span> result = <span class="hljs-string">&quot;#ERR&quot;</span>
+          <span class="hljs-keyword">try</span>{
+            result = <span class="hljs-built_in">isNaN</span>(<span class="hljs-built_in">eval</span>(replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">1</span>)))?<span class="hljs-string">&quot;#ERR&quot;</span>:<span class="hljs-built_in">eval</span>(replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">1</span>))
+          }
+          <span class="hljs-keyword">catch</span>{
+            result = <span class="hljs-string">&quot;#ERR&quot;</span>
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(replacedCells[cellID].<span class="hljs-title function_">substring</span>(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>)!==<span class="hljs-string">&quot;=&quot;</span> &amp;&amp; replacedCells[cellID]!==<span class="hljs-string">&quot;&quot;</span>){
+          <span class="hljs-keyword">let</span> result = <span class="hljs-string">&quot;#ERR&quot;</span>
+          <span class="hljs-keyword">try</span>{
+            result = <span class="hljs-built_in">isNaN</span>(<span class="hljs-built_in">parseInt</span>(replacedCells[cellID]))?replacedCells[cellID]:<span class="hljs-built_in">parseInt</span>(replacedCells[cellID])
+          }
+          <span class="hljs-keyword">catch</span>{
+            result = <span class="hljs-string">&quot;#ERR&quot;</span>
+          }
+          replacedCells = {...replacedCells, [cellID]:result}
+        }
+
+        <span class="hljs-keyword">if</span>(replacedCells[cellID].<span class="hljs-title function_">toString</span>().<span class="hljs-title function_">includes</span>(<span class="hljs-string">&quot;Infinity&quot;</span>)){
+          replacedCells = {...replacedCells, [cellID]:<span class="hljs-string">&quot;#ERR&quot;</span>} 
+        }
+
+      })  
+    }
+    <span class="hljs-keyword">return</span> replacedCells
+  }
+</code></pre>
+
+          </div>
+          <style type='text/css'>body {
+    font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #111;
+    background-color: #fbfbfb;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-feature-settings: "kern" 1;
+    -moz-font-feature-settings: "kern" 1;
+    -o-font-feature-settings: "kern" 1;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+    padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+    body>#content {
+        padding: 0px 20px 20px 20px !important;
+    }
+}
+
+body>#content {
+    margin: 0px;
+    max-width: 900px;
+    border: 1px solid #e1e4e8;
+    padding: 10px 40px;
+    padding-bottom: 20px;
+    border-radius: 2px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+summary {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+hr {
+    color: #bbb;
+    background-color: #bbb;
+    height: 1px;
+    flex: 0 1 auto;
+    margin: 1em 0;
+    padding: 0;
+    border: none;
+}
+
+.hljs-operator {
+    color: #868686;
+    /* There is a bug where the syntax highlighter would pick no color for e.g. `&&` symbols in the code samples. Let's overwrite this */
+}
+
+
+/**
+ * Links
+ */
+
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #0366d6;
+}
+
+a:hover {
+    color: #0366d6;
+    text-decoration: underline;
+}
+
+pre {
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    font-size: 85%;
+    line-height: 1.45;
+    overflow: auto;
+    padding: 16px;
+}
+
+
+/**
+  * Code blocks
+  */
+
+code {
+    background-color: rgba(27, 31, 35, .05);
+    border-radius: 3px;
+    font-size: 85%;
+    margin: 0;
+    word-wrap: break-word;
+    padding: .2em .4em;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+}
+
+pre>code {
+    background-color: transparent;
+    border: 0;
+    display: inline;
+    line-height: inherit;
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+    word-wrap: normal;
+    font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+
+blockquote {
+    margin-left: 30px;
+    margin-top: 0px;
+    margin-bottom: 16px;
+    border-left-width: 3px;
+    padding: 0 1em;
+    color: #828282;
+    border-left: 4px solid #e8e8e8;
+    padding-left: 15px;
+    font-size: 18px;
+    letter-spacing: -1px;
+    font-style: italic;
+}
+
+blockquote * {
+    font-style: normal !important;
+    letter-spacing: 0;
+    color: #6a737d !important;
+}
+
+
+/**
+ * Tables
+ */
+
+table {
+    border-spacing: 2px;
+    display: block;
+    font-size: 14px;
+    overflow: auto;
+    width: 100%;
+    margin-bottom: 16px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+th {
+    font-weight: 600;
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+tr {
+    background-color: #fff;
+    border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+}
+
+
+/**
+ * Others
+ */
+
+img {
+    max-width: 100%;
+}
+
+p {
+    line-height: 24px;
+    font-weight: 400;
+    font-size: 16px;
+    color: #24292e;
+}
+
+ul {
+    margin-top: 0;
+}
+
+li {
+    color: #24292e;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+li+li {
+    margin-top: 0.25em;
+}
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: #24292e;
+}
+
+a:visited {
+    color: #0366d6;
+}
+
+h1,
+h2,
+h3 {
+    border-bottom: 1px solid #eaecef;
+    color: #111;
+    /* Darker */
+}
+
+code>* {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+}</style>
+          <style type='text/css'>pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#f6f8fa}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+        </body>
+        <link rel="stylesheet" href="https://unpkg.com/github-syntax-dark@latest/lib/github-dark.css" />
+      </html>

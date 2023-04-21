@@ -1,0 +1,393 @@
+ Test 1: Navigate to page.
+    Navigate to "http://localhost:3000/Test_2_9"
+    ✓ PASS
+ Test 2: Verify cells are displayed.
+    Expect "[data-test="A1"]" to be visible
+    Expect "[data-test="B1"]" to be visible
+    Expect "[data-test="C1"]" to be visible
+    Expect "[data-test="A3"]" to be visible
+    Expect "[data-test="B4"]" to be visible
+    Expect "[data-test="C5"]" to be visible
+    Expect "[data-test="A6"]" to be visible
+    Expect "[data-test="B7"]" to be visible
+    Expect "[data-test="C7"]" to be visible
+    Expect "[data-test="A1"] input" to be hidden
+    Expect "[data-test="B1"] input" to be hidden
+    Expect "[data-test="C2"] input" to be hidden
+    ✓ PASS
+ Test 3: Enter `foo` into A1.
+    Click on "[data-test="A1"]"
+    Expect "[data-test="A1"] input" to be visible
+    Expect "[data-test="A1"] input" to be focused
+    Type "foo" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"] input" to be hidden
+    Expect "[data-test="A1"]" to equal "foo"
+    Click on "[data-test="A1"]"
+    Expect "[data-test="A1"] input" to equal "foo"
+    Click on "body"
+    Expect "[data-test="A1"] input" to be hidden
+    Expect "[data-test="A1"]" to equal "foo"
+    ✓ PASS
+ Test 4: Enter `=2` into A2.
+    Click on "[data-test="A2"]"
+    Type "=2" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A2"]" to equal "2"
+    ✓ PASS
+ Test 5: Enter `=1+1` into A3.
+    Click on "[data-test="A3"]"
+    Type "=1+1" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A3"]" to equal "2"
+    ✓ PASS
+ Test 6: Enter `=10 * 2` into A4.
+    Click on "[data-test="A4"]"
+    Type "=10 * 2" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A4"]" to equal "20"
+    ✓ PASS
+ Test 7: Enter `=10/2` into A5.
+    Click on "[data-test="A5"]"
+    Type "=10/2" to "[data-test="A5"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A5"]" to equal "5"
+    ✓ PASS
+ Test 8: Enter `=-1+1` into A6.
+    Click on "[data-test="A6"]"
+    Type "=-1+1" to "[data-test="A6"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A6"]" to equal "0"
+    ✓ PASS
+ Test 9: Enter `=10000/10000` into A7.
+    Click on "[data-test="A7"]"
+    Type "=10000/10000" to "[data-test="A7"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A7"]" to equal "1"
+    ✓ PASS
+ Test 10: Enter `=2+2*2` into B1.
+    Click on "[data-test="B1"]"
+    Type "=2+2*2" to "[data-test="B1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="B1"]" to equal "6"
+    ✓ PASS
+ Test 11: Enter `=(2+2)*2` into B2.
+    Click on "[data-test="B2"]"
+    Type "=(2+2)*2" to "[data-test="B2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="B2"]" to equal "8"
+    ✓ PASS
+ Test 12: Enter `=1+2*3/6` into B3.
+    Click on "[data-test="B3"]"
+    Type "=1+2*3/6" to "[data-test="B3"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="B3"]" to equal "2"
+    ✓ PASS
+ Test 13: Enter `=(1+2) * ((5 + 1)+1)` into B4.
+    Click on "[data-test="B4"]"
+    Type "=(1+2) * ((5 + 1)+1)" to "[data-test="B4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="B4"]" to equal "21"
+    ✓ PASS
+ Test 14: Enter `=-1*(1+2)*7+((1+1)+1)` into B5.
+    Click on "[data-test="B5"]"
+    Type "=-1*(1+2)*7+((1+1)+1)" to "[data-test="B5"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="B5"]" to equal "-18"
+    ✓ PASS
+ Test 15: Enter `=1-2` into C1.
+    Click on "[data-test="C1"]"
+    Type "=1-2" to "[data-test="C1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="C1"]" to equal "-1"
+    ✓ PASS
+ Test 16: Enter `=2-1` into C2.
+    Click on "[data-test="C2"]"
+    Type "=2-1" to "[data-test="C2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="C2"]" to equal "1"
+    ✓ PASS
+ Test 17: Enter `=-20-11` into C3.
+    Click on "[data-test="C3"]"
+    Type "=-20-11" to "[data-test="C3"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="C3"]" to equal "-31"
+    ✓ PASS
+ Test 18: Enter `=1-2-3` into C4.
+    Click on "[data-test="C4"]"
+    Type "=1-2-3" to "[data-test="C4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="C4"]" to equal "-4"
+    ✓ PASS
+ Test 19: Div by 0.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=3/0" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Click on "[data-test="A2"]"
+    Type "=(1-1)/(2-2)" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A2"]" to equal "#ERR"
+    Click on "[data-test="A3"]"
+    Type "=5/((2 * 2)-4)" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A3"]" to equal "#ERR"
+    ✓ PASS
+ Test 20: Invalid formulas.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=3//0" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Click on "[data-test="A2"]"
+    Type "=***" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A2"]" to equal "#ERR"
+    Click on "[data-test="A3"]"
+    Type "=avc" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A3"]" to equal "#ERR"
+    Click on "[data-test="A4"]"
+    Type "=11e,.34" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A4"]" to equal "#ERR"
+    ✓ PASS
+ Test 21: Simple references.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=1+2" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A2"]"
+    Type "3" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A3"]"
+    Type "=A2+1" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A4"]"
+    Type "=A3+1" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A3"]" to equal "4"
+    Expect "[data-test="A4"]" to equal "5"
+    Click on "[data-test="A2"]"
+    Clear "[data-test="A2"] input"
+    Type "4" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A3"]" to equal "5"
+    Expect "[data-test="A4"]" to equal "6"
+    ✓ PASS
+ Test 22: Invalid references.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=A2+1" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Click on "[data-test="A2"]"
+    Type "5" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "6"
+    Click on "[data-test="A2"]"
+    Clear "[data-test="A2"] input"
+    Type "a" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    ✓ PASS
+ Test 23: Reference cycles.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "1" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A2"]"
+    Type "=A1+1" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A3"]"
+    Type "=A2+1" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A4"]"
+    Type "=A3+1" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A5"]"
+    Type "=A4+1" to "[data-test="A5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A6"]"
+    Type "=A5+1" to "[data-test="A6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A7"]"
+    Type "=A6+1" to "[data-test="A7"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B1"]"
+    Type "=B1+1" to "[data-test="B1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A7"]" to equal "7"
+    Expect "[data-test="B1"]" to equal "#ERR"
+    Click on "[data-test="A1"]"
+    Clear "[data-test="A1"] input"
+    Type "=A7+1" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Expect "[data-test="A2"]" to equal "#ERR"
+    Expect "[data-test="A3"]" to equal "#ERR"
+    Expect "[data-test="A4"]" to equal "#ERR"
+    Expect "[data-test="A5"]" to equal "#ERR"
+    Expect "[data-test="A6"]" to equal "#ERR"
+    Expect "[data-test="A7"]" to equal "#ERR"
+    Click on "[data-test="A1"]"
+    Clear "[data-test="A1"] input"
+    Type "=A3+1" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Expect "[data-test="A2"]" to equal "#ERR"
+    Expect "[data-test="A3"]" to equal "#ERR"
+    Expect "[data-test="A4"]" to equal "#ERR"
+    Expect "[data-test="A5"]" to equal "#ERR"
+    Expect "[data-test="A6"]" to equal "#ERR"
+    Expect "[data-test="A7"]" to equal "#ERR"
+    Click on "[data-test="A4"]"
+    Clear "[data-test="A4"] input"
+    Type "1" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Expect "[data-test="A2"]" to equal "#ERR"
+    Expect "[data-test="A3"]" to equal "#ERR"
+    Expect "[data-test="A4"]" to equal "1"
+    Expect "[data-test="A5"]" to equal "2"
+    Expect "[data-test="A6"]" to equal "3"
+    Expect "[data-test="A7"]" to equal "4"
+    ✓ PASS
+ Test 24: Complex references.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=(1+2)*2" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A2"]"
+    Type "=A1+1" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A3"]"
+    Type "=A1+A2" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A4"]"
+    Type "=A3-A5" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A5"]"
+    Type "=6" to "[data-test="A5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A6"]"
+    Type "=(A1+A1-3)*2" to "[data-test="A6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A7"]"
+    Type "=(A1+A2)+(A3+A4)+(A5+A6)" to "[data-test="A7"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "6"
+    Expect "[data-test="A2"]" to equal "7"
+    Expect "[data-test="A3"]" to equal "13"
+    Expect "[data-test="A4"]" to equal "7"
+    Expect "[data-test="A5"]" to equal "6"
+    Expect "[data-test="A6"]" to equal "18"
+    Expect "[data-test="A7"]" to equal "57"
+    ✓ PASS
+ Test 25: Fibonacci sequence.
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "1" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A2"]"
+    Type "1" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A3"]"
+    Type "=A1+A2" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A4"]"
+    Type "=A2+A3" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A5"]"
+    Type "=A3+A4" to "[data-test="A5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A6"]"
+    Type "=A4+A5" to "[data-test="A6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A7"]"
+    Type "=A5+A6" to "[data-test="A7"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B1"]"
+    Type "=A6+A7" to "[data-test="B1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B2"]"
+    Type "=A7+B1" to "[data-test="B2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B3"]"
+    Type "=B1+B2" to "[data-test="B3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B4"]"
+    Type "=B2+B3" to "[data-test="B4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B5"]"
+    Type "=B3+B4" to "[data-test="B5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B6"]"
+    Type "=B4+B5" to "[data-test="B6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B7"]"
+    Type "=B5+B6" to "[data-test="B7"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A5"]" to equal "5"
+    Expect "[data-test="A7"]" to equal "13"
+    Expect "[data-test="B1"]" to equal "21"
+    Expect "[data-test="B4"]" to equal "89"
+    Expect "[data-test="B7"]" to equal "377"
+    ✓ PASS
+ Test 26: Long references
+    Reloading page
+    Click on "[data-test="A1"]"
+    Type "=A2+A2" to "[data-test="A1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A2"]"
+    Type "=A3+A3" to "[data-test="A2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A3"]"
+    Type "=A4+A4" to "[data-test="A3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A4"]"
+    Type "=A5+A5" to "[data-test="A4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A5"]"
+    Type "=A6+A6" to "[data-test="A5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A6"]"
+    Type "=A7+A7" to "[data-test="A6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="A7"]"
+    Type "=B1+B1" to "[data-test="A7"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B1"]"
+    Type "=B2+B2" to "[data-test="B1"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B2"]"
+    Type "=B3+B3" to "[data-test="B2"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B3"]"
+    Type "=B4+B4" to "[data-test="B3"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B4"]"
+    Type "=B5+B5" to "[data-test="B4"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B5"]"
+    Type "=B6+B6" to "[data-test="B5"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B6"]"
+    Type "=B7+B7" to "[data-test="B6"] input"
+    Press keyboard key "Enter"
+    Click on "[data-test="B7"]"
+    Type "=C1+C1" to "[data-test="B7"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "#ERR"
+    Click on "[data-test="C1"]"
+    Type "1" to "[data-test="C1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "16384"
+    Click on "[data-test="C1"]"
+    Clear "[data-test="C1"] input"
+    Type "5" to "[data-test="C1"] input"
+    Press keyboard key "Enter"
+    Expect "[data-test="A1"]" to equal "81920"
+    ✓ PASS
+PASS
