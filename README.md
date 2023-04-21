@@ -289,3 +289,5 @@ function evaluateCells(replacedCells){
 ```
 <br/>
 The test cases can be found at https://github.com/practice-dev/practice-dev/blob/master/content/modules/02-react-practice/009-calculation-sheet/test-case.ts
+
+Test results for my solution can be seen here: https://github.com/combsbt/test-app/blob/master/output.txt
