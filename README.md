@@ -92,7 +92,7 @@
   You are free to add classes, styles, ids, but don't edit or remove{' '}
   <code>data-test</code> attributes.
 </div>
-
+<br/>
 
 
 ```jsx
@@ -260,3 +260,32 @@ function evaluateCells(replacedCells){
     return replacedCells
   }
 ```
+```css
+.grid2 {
+  display: inline-grid;
+  grid-template-columns: 30px 150px 150px 150px;
+  grid-gap: 1px;
+  background: #999;
+  border: 1px solid #999;
+  color: #333;
+}
+
+.cell2 {
+  background: white;
+  text-align: left;
+  padding: 2px 5px;
+}
+
+.header {
+  text-align: center;
+  font-weight: bold;
+}
+
+.cell2 input {
+  border: none;
+  width: 100%;
+}
+
+```
+<br/>
+The test cases can be found at https://github.com/practice-dev/practice-dev/blob/master/content/modules/02-react-practice/009-calculation-sheet/test-case.ts
